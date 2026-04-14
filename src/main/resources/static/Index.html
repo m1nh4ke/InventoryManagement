@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Inventory Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+    <style>
+        /* ── RESET & ROOT ─────────────────────────────────────────────────────────── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --bg:         #0f1117;
+            --bg2:        #181c27;
+            --bg3:        #1e2335;
+            --border:     #2a3047;
+            --accent:     #4f8ef7;
+            --accent2:    #38d9a9;
+            --accent3:    #f7a94f;
+            --danger:     #f7604f;
+            --text:       #e8eaf2;
+            --muted:      #7a849e;
+            --card-shadow: 0 4px 24px rgba(0,0,0,.35);
+            --radius:     12px;
+        }
+        body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+        a { text-decoration: none; color: inherit; }
+        button { font-family: inherit; cursor: pointer; }
+
+        /* ── SIDEBAR ──────────────────────────────────────────────────────────────── */
+        .sidebar {
+            position: fixed; left: 0; top: 0; bottom: 0; width: 230px;
+            background: var(--bg2); border-right: 1px solid var(--border);
+            display: flex; flex-direction: column; z-index: 100;
+            transition: transform .3s;
+        }
+        .sidebar-logo {
+            padding: 24px 20px 20px;
+            font-size: 18px; font-weight: 700; letter-spacing: -.3px;
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; gap: 10px;
+        }
+        .logo-icon { width: 32px; height: 32px; background: var(--accent); border-radius: 8px;
+            display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .sidebar-nav { flex: 1; padding: 14px 10px; overflow-y: auto; }
+        .nav-section { font-size: 10px; font-weight: 600; color: var(--muted); letter-spacing: 1.2px;
+            text-transform: uppercase; padding: 10px 10px 6px; }
+        .nav-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 12px; border-radius: 8px; font-size: 13.5px; font-weight: 500;
+            color: var(--muted); cursor: pointer; transition: all .18s; margin-bottom: 2px;
+        }
+        .nav-item i { width: 18px; text-align: center; font-size: 14px; }
+        .nav-item:hover { background: var(--bg3); color: var(--text); }
+        .nav-item.active { background: rgba(79,142,247,.15); color: var(--accent); }
+        .nav-item .badge { margin-left: auto; background: var(--danger); color: #fff;
+            font-size: 10px; font-weight: 700; border-radius: 10px; padding: 1px 6px; }
+        .sidebar-footer { padding: 16px; border-top: 1px solid var(--border); }
+        .user-row { display: flex; align-items: center; gap: 10px; }
+        .user-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--accent);
+            display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex-shrink: 0; }
+        .user-name { font-size: 13px; font-weight: 600; }
+        .user-role { font-size: 11px; color: var(--muted); }
+
+        /* ── MAIN ─────────────────────────────────────────────────────────────────── */
+        .main { margin-left: 230px; min-height: 100vh; display: flex; flex-direction: column; }
+        .topbar {
+            height: 58px; background: var(--bg2); border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 28px; position: sticky; top: 0; z-index: 90;
+        }
+        .page-title { font-size: 17px; font-weight: 700; }
+        .topbar-right { display: flex; align-items: center; gap: 12px; }
+        .icon-btn-top { width: 36px; height: 36px; border-radius: 8px; background: var(--bg3);
+            border: 1px solid var(--border); display: flex; align-items: center; justify-content: center;
+            color: var(--muted); font-size: 14px; cursor: pointer; transition: all .18s; }
+        .icon-btn-top:hover { color: var(--text); border-color: var(--accent); }
+        .content { flex: 1; padding: 28px; }
+
+        /* ── STAT CARDS ───────────────────────────────────────────────────────────── */
+        .stats-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 28px; }
+        .stat-card {
+            background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius);
+            padding: 20px; position: relative; overflow: hidden; transition: transform .2s, box-shadow .2s;
+        }
+        .stat-card:hover { transform: translateY(-2px); box-shadow: var(--card-shadow); }
+        .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0;
+            height: 3px; border-radius: var(--radius) var(--radius) 0 0; }
+        .stat-card.blue::before  { background: var(--accent); }
+        .stat-card.green::before { background: var(--accent2); }
+        .stat-card.orange::before{ background: var(--accent3); }
+        .stat-card.red::before   { background: var(--danger); }
+        .stat-icon { width: 40px; height: 40px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center; font-size: 16px; margin-bottom: 14px; }
+        .stat-card.blue   .stat-icon { background: rgba(79,142,247,.15);  color: var(--accent); }
+        .stat-card.green  .stat-icon { background: rgba(56,217,169,.15);  color: var(--accent2); }
+        .stat-card.orange .stat-icon { background: rgba(247,169,79,.15);  color: var(--accent3); }
+        .stat-card.red    .stat-icon { background: rgba(247,96,79,.15);   color: var(--danger); }
+        .stat-label { font-size: 12px; color: var(--muted); font-weight: 500; margin-bottom: 4px; text-transform: uppercase; letter-spacing: .5px; }
+        .stat-value { font-size: 28px; font-weight: 700; line-height: 1; }
+        .stat-sub { font-size: 12px; color: var(--muted); margin-top: 6px; }
+
+        /* ── SECTION ──────────────────────────────────────────────────────────────── */
+        .section { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 24px; }
+        .section-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 22px; border-bottom: 1px solid var(--border); }
+        .section-title { font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        .section-title i { color: var(--accent); }
+        .section-actions { display: flex; gap: 8px; align-items: center; }
+
+        /* ── TOOLBAR ──────────────────────────────────────────────────────────────── */
+        .toolbar { display: flex; align-items: center; gap: 10px; padding: 14px 22px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+        .search-box { display: flex; align-items: center; gap: 8px; background: var(--bg3);
+            border: 1px solid var(--border); border-radius: 8px; padding: 8px 14px; flex: 1; min-width: 200px; transition: border-color .18s; }
+        .search-box:focus-within { border-color: var(--accent); }
+        .search-box i { color: var(--muted); font-size: 13px; }
+        .search-box input { background: transparent; border: none; outline: none; color: var(--text); font-family: inherit; font-size: 13px; width: 100%; }
+        .search-box input::placeholder { color: var(--muted); }
+
+        /* ── BUTTONS ──────────────────────────────────────────────────────────────── */
+        .btn { display: inline-flex; align-items: center; gap: 7px; padding: 8px 16px;
+            border-radius: 8px; font-size: 13px; font-weight: 600; border: none; transition: all .18s; }
+        .btn-primary { background: var(--accent); color: #fff; }
+        .btn-primary:hover { background: #3a7de8; box-shadow: 0 4px 14px rgba(79,142,247,.35); }
+        .btn-success { background: var(--accent2); color: #0f1117; }
+        .btn-success:hover { background: #2bc99a; }
+        .btn-danger  { background: var(--danger); color: #fff; }
+        .btn-danger:hover  { background: #e54b3a; }
+        .btn-ghost { background: var(--bg3); color: var(--muted); border: 1px solid var(--border); }
+        .btn-ghost:hover { color: var(--text); border-color: var(--accent); }
+        .btn-sm { padding: 5px 10px; font-size: 12px; }
+
+        /* ── TABLE ────────────────────────────────────────────────────────────────── */
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        thead tr { background: var(--bg3); }
+        th { padding: 12px 16px; text-align: left; font-size: 11px; font-weight: 600;
+            color: var(--muted); text-transform: uppercase; letter-spacing: .7px; white-space: nowrap; }
+        td { padding: 13px 16px; font-size: 13.5px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+        tr:last-child td { border-bottom: none; }
+        tbody tr { transition: background .15s; }
+        tbody tr:hover td { background: rgba(255,255,255,.02); }
+        .mono { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); }
+        .fw600 { font-weight: 600; }
+
+        /* ── PILLS ────────────────────────────────────────────────────────────────── */
+        .pill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px;
+            border-radius: 20px; font-size: 11.5px; font-weight: 600; }
+        .pill-active  { background: rgba(56,217,169,.12); color: var(--accent2); }
+        .pill-inactive{ background: rgba(122,132,158,.12); color: var(--muted); }
+        .pill-low     { background: rgba(247,169,79,.12);  color: var(--accent3); }
+        .pill-out     { background: rgba(247,96,79,.12);   color: var(--danger); }
+        .pill-in      { background: rgba(56,217,169,.12);  color: var(--accent2); }
+        .pill-adjustment { background: rgba(79,142,247,.12); color: var(--accent); }
+        .pill-return  { background: rgba(247,169,79,.12);  color: var(--accent3); }
+
+        /* ── ACTION BTNS ──────────────────────────────────────────────────────────── */
+        .action-cell { display: flex; gap: 6px; }
+        .act-btn { width: 30px; height: 30px; border-radius: 7px; border: 1px solid var(--border);
+            background: var(--bg3); display: flex; align-items: center; justify-content: center;
+            font-size: 12px; color: var(--muted); cursor: pointer; transition: all .18s; }
+        .act-btn.edit:hover  { background: rgba(79,142,247,.15);  color: var(--accent);  border-color: var(--accent); }
+        .act-btn.del:hover   { background: rgba(247,96,79,.15);   color: var(--danger);  border-color: var(--danger); }
+        .act-btn.view:hover  { background: rgba(56,217,169,.15);  color: var(--accent2); border-color: var(--accent2); }
+
+        /* ── MODAL ────────────────────────────────────────────────────────────────── */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,.65);
+            z-index: 500; align-items: center; justify-content: center; backdrop-filter: blur(4px);
+        }
+        .modal-overlay.open { display: flex; animation: fadeIn .2s; }
+        @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+        .modal {
+            background: var(--bg2); border: 1px solid var(--border); border-radius: 14px;
+            width: 520px; max-width: 95vw; max-height: 90vh; overflow-y: auto;
+            animation: slideUp .22s ease;
+        }
+        @keyframes slideUp { from { opacity:0; transform: translateY(16px); } to { opacity:1; transform:none; } }
+        .modal-header { display: flex; align-items: center; justify-content: space-between;
+            padding: 20px 24px; border-bottom: 1px solid var(--border); }
+        .modal-title { font-size: 16px; font-weight: 700; }
+        .modal-close { width: 30px; height: 30px; border-radius: 7px; border: 1px solid var(--border);
+            background: var(--bg3); display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: var(--muted); font-size: 14px; transition: all .15s; }
+        .modal-close:hover { color: var(--danger); border-color: var(--danger); }
+        .modal-body { padding: 24px; }
+        .modal-footer { display: flex; justify-content: flex-end; gap: 10px; padding: 16px 24px; border-top: 1px solid var(--border); }
+
+        /* ── FORM ─────────────────────────────────────────────────────────────────── */
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .form-grid.full { grid-template-columns: 1fr; }
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group.span2 { grid-column: span 2; }
+        label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+        input, select, textarea {
+            background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
+            padding: 9px 13px; color: var(--text); font-family: inherit; font-size: 13.5px;
+            outline: none; transition: border-color .18s; width: 100%;
+        }
+        input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+        select option { background: var(--bg2); }
+        textarea { resize: vertical; min-height: 80px; }
+
+        /* ── PAGINATION ───────────────────────────────────────────────────────────── */
+        .pagination { display: flex; align-items: center; justify-content: space-between;
+            padding: 14px 22px; border-top: 1px solid var(--border); }
+        .pagination-info { font-size: 12px; color: var(--muted); }
+        .page-btns { display: flex; gap: 4px; }
+        .page-btn { width: 32px; height: 32px; border-radius: 7px; border: 1px solid var(--border);
+            background: var(--bg3); display: flex; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: 600; cursor: pointer; color: var(--muted); transition: all .18s; }
+        .page-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+        .page-btn:hover:not(.active) { border-color: var(--accent); color: var(--accent); }
+
+        /* ── TOAST ────────────────────────────────────────────────────────────────── */
+        #toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 999; display: flex; flex-direction: column; gap: 10px; }
+        .toast { display: flex; align-items: center; gap: 12px; padding: 14px 18px;
+            border-radius: 10px; background: var(--bg2); border: 1px solid var(--border);
+            box-shadow: 0 8px 30px rgba(0,0,0,.4); font-size: 13.5px; font-weight: 500;
+            animation: toastIn .3s ease; min-width: 260px; }
+        .toast.success { border-color: var(--accent2); }
+        .toast.error   { border-color: var(--danger); }
+        .toast i { font-size: 16px; }
+        .toast.success i { color: var(--accent2); }
+        .toast.error   i { color: var(--danger); }
+        @keyframes toastIn { from { opacity:0; transform: translateX(20px); } to { opacity:1; transform:none; } }
+
+        /* ── LOADER ───────────────────────────────────────────────────────────────── */
+        .loader { display: flex; align-items: center; justify-content: center; padding: 60px; }
+        .spinner { width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--accent);
+            border-radius: 50%; animation: spin .7s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .empty-state { text-align: center; padding: 60px; color: var(--muted); }
+        .empty-state i { font-size: 40px; margin-bottom: 14px; opacity: .4; display: block; }
+
+        /* ── TABS ─────────────────────────────────────────────────────────────────── */
+        .tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); padding: 0 22px; }
+        .tab { padding: 12px 18px; font-size: 13px; font-weight: 600; color: var(--muted);
+            cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all .18s; }
+        .tab:hover { color: var(--text); }
+        .tab.active { color: var(--accent); border-color: var(--accent); }
+
+        /* ── DASHBOARD SPECIFICS ──────────────────────────────────────────────────── */
+        .two-col { display: grid; grid-template-columns: 1fr 360px; gap: 20px; }
+        .activity-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 22px; border-bottom: 1px solid var(--border); }
+        .activity-item:last-child { border-bottom: none; }
+        .act-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+        .act-dot.in     { background: var(--accent2); }
+        .act-dot.out    { background: var(--danger); }
+        .act-dot.adjust { background: var(--accent); }
+        .act-dot.return { background: var(--accent3); }
+        .act-text  { font-size: 13px; line-height: 1.5; }
+        .act-time  { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+        .low-stock-item { display: flex; align-items: center; justify-content: space-between; padding: 11px 22px; border-bottom: 1px solid var(--border); }
+        .low-stock-item:last-child { border-bottom: none; }
+        .ls-bar-wrap { width: 80px; }
+        .ls-bar { height: 4px; background: var(--bg3); border-radius: 2px; overflow: hidden; }
+        .ls-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg, var(--danger), var(--accent3)); }
+        .ls-qty { font-size: 12px; font-weight: 700; color: var(--danger); margin-top: 3px; }
+
+        /* ── RESPONSIVE ───────────────────────────────────────────────────────────── */
+        @media (max-width: 1100px) { .two-col { grid-template-columns: 1fr; } }
+        @media (max-width: 900px)  { .stats-grid { grid-template-columns: repeat(2,1fr); } }
+        @media (max-width: 768px)  {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: none; }
+            .main { margin-left: 0; }
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+        <div class="logo-icon"><i class="fas fa-boxes-stacked" style="color:#fff;font-size:14px;"></i></div>
+        Inventory Management
+    </div>
+    <nav class="sidebar-nav">
+        <div class="nav-section">Main</div>
+        <div class="nav-item active" onclick="showPage('dashboard')"><i class="fas fa-chart-pie"></i> Dashboard</div>
+        <div class="nav-item" onclick="showPage('products')"><i class="fas fa-box"></i> Products <span class="badge" id="low-stock-badge" style="display:none;"></span></div>
+
+        <div class="nav-section">Management</div>
+        <div class="nav-item" onclick="showPage('categories')"><i class="fas fa-tags"></i> Categories</div>
+        <div class="nav-item" onclick="showPage('suppliers')"><i class="fas fa-truck"></i> Suppliers</div>
+        <div class="nav-item" onclick="showPage('stock')"><i class="fas fa-exchange-alt"></i> Stock Movements</div>
+
+        <div class="nav-section">System</div>
+        <div class="nav-item" onclick="showPage('users')"><i class="fas fa-users"></i> Users</div>
+    </nav>
+    <div class="sidebar-footer">
+        <div class="user-row">
+            <div class="user-avatar">AD</div>
+            <div><div class="user-name">Admin</div><div class="user-role">Administrator</div></div>
+        </div>
+    </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+    <header class="topbar">
+        <div style="display:flex;align-items:center;gap:14px;">
+            <button class="icon-btn-top" onclick="document.getElementById('sidebar').classList.toggle('open')"><i class="fas fa-bars"></i></button>
+            <div class="page-title" id="page-title">Dashboard</div>
+        </div>
+        <div class="topbar-right">
+            <div class="icon-btn-top" title="Refresh" onclick="reloadPage()"><i class="fas fa-rotate-right"></i></div>
+            <div class="icon-btn-top" title="API Status" id="api-status-btn"><i class="fas fa-circle" style="color:var(--muted);font-size:10px;"></i></div>
+        </div>
+    </header>
+    <div class="content" id="content"></div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-title" id="modal-title">Modal</div>
+            <div class="modal-close" onclick="closeModal()"><i class="fas fa-xmark"></i></div>
+        </div>
+        <div class="modal-body" id="modal-body"></div>
+        <div class="modal-footer" id="modal-footer"></div>
+    </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast-container"></div>
+
+<script>
+    // ── CONFIG ───────────────────────────────────────────────────────────────────
+    const API = 'http://localhost:8080/api';
+    let currentPage = 'dashboard';
+
+    // ── API HELPER ───────────────────────────────────────────────────────────────
+    async function api(path, method = 'GET', body = null) {
+        const opts = { method, headers: { 'Content-Type': 'application/json' } };
+        if (body) opts.body = JSON.stringify(body);
+        try {
+            const res = await fetch(API + path, opts);
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({ error: 'Request failed' }));
+                throw new Error(err.error || 'Request failed');
+            }
+            if (res.status === 204) return null;
+            return await res.json();
+        } catch (e) {
+            if (e.name === 'TypeError') throw new Error('Cannot connect to server. Make sure Spring Boot is running on port 8080.');
+            throw e;
+        }
+    }
+
+    // ── TOAST ────────────────────────────────────────────────────────────────────
+    function toast(msg, type = 'success') {
+        const t = document.createElement('div');
+        t.className = `toast ${type}`;
+        t.innerHTML = `<i class="fas fa-${type === 'success' ? 'circle-check' : 'circle-xmark'}"></i> ${msg}`;
+        document.getElementById('toast-container').appendChild(t);
+        setTimeout(() => t.remove(), 3500);
+    }
+
+    // ── MODAL ────────────────────────────────────────────────────────────────────
+    function openModal(title, body, footer) {
+        document.getElementById('modal-title').textContent = title;
+        document.getElementById('modal-body').innerHTML = body;
+        document.getElementById('modal-footer').innerHTML = footer;
+        document.getElementById('modal').classList.add('open');
+    }
+    function closeModal() { document.getElementById('modal').classList.remove('open'); }
+    document.getElementById('modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+
+    // ── NAVIGATION ───────────────────────────────────────────────────────────────
+    function showPage(page) {
+        currentPage = page;
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(el => {
+            if (el.getAttribute('onclick')?.includes(page)) el.classList.add('active');
+        });
+        const titles = { dashboard:'Dashboard', products:'Products', categories:'Categories',
+            suppliers:'Suppliers', stock:'Stock Movements', users:'Users' };
+        document.getElementById('page-title').textContent = titles[page] || page;
+        const pages = { dashboard, products, categories, suppliers, stock, users };
+        if (pages[page]) pages[page]();
+    }
+    function reloadPage() { showPage(currentPage); }
+
+    // ─────────────────────────────────────────────────────────────────────────────
+    // DASHBOARD
+    // ─────────────────────────────────────────────────────────────────────────────
+    async function dashboard() {
+        document.getElementById('content').innerHTML = `<div class="loader"><div class="spinner"></div></div>`;
+        try {
+            const [products, categories, suppliers, movements] = await Promise.all([
+                api('/products'), api('/categories'), api('/suppliers'), api('/stock-movements')
+            ]);
+            const lowStock = products.filter(p => p.quantity <= p.minStockLevel);
+            const outOfStock = products.filter(p => p.quantity === 0);
+
+            // Update sidebar badge
+            const badge = document.getElementById('low-stock-badge');
+            if (lowStock.length > 0) { badge.textContent = lowStock.length; badge.style.display = ''; }
+
+            const recentMovements = movements.slice(0, 8);
+
+            document.getElementById('content').innerHTML = `
+      <div class="stats-grid">
+        <div class="stat-card blue">
+          <div class="stat-icon"><i class="fas fa-box"></i></div>
+          <div class="stat-label">Total Products</div>
+          <div class="stat-value">${products.length}</div>
+          <div class="stat-sub">${outOfStock.length} out of stock</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-icon"><i class="fas fa-tags"></i></div>
+          <div class="stat-label">Categories</div>
+          <div class="stat-value">${categories.length}</div>
+          <div class="stat-sub">Product groups</div>
+        </div>
+        <div class="stat-card orange">
+          <div class="stat-icon"><i class="fas fa-truck"></i></div>
+          <div class="stat-label">Suppliers</div>
+          <div class="stat-value">${suppliers.length}</div>
+          <div class="stat-sub">${suppliers.filter(s=>s.isActive).length} active</div>
+        </div>
+        <div class="stat-card red">
+          <div class="stat-icon"><i class="fas fa-triangle-exclamation"></i></div>
+          <div class="stat-label">Low Stock</div>
+          <div class="stat-value">${lowStock.length}</div>
+          <div class="stat-sub">Need restocking</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="section">
+          <div class="section-header">
+            <div class="section-title"><i class="fas fa-history"></i> Recent Stock Movements</div>
+          </div>
+          ${recentMovements.length === 0
+                ? `<div class="empty-state"><i class="fas fa-inbox"></i>No movements yet</div>`
+                : recentMovements.map(m => `
+              <div class="activity-item">
+                <div class="act-dot ${m.type.toLowerCase()}"></div>
+                <div>
+                  <div class="act-text"><strong>${m.product?.name || 'Unknown'}</strong> — ${m.type} ${m.quantity} units</div>
+                  <div class="act-time">${m.reason || ''} · ${m.user?.username || 'System'}</div>
+                </div>
+                <span class="pill pill-${m.type.toLowerCase()}" style="margin-left:auto;">${m.type}</span>
+              </div>`).join('')}
+        </div>
+
+        <div class="section">
+          <div class="section-header">
+            <div class="section-title"><i class="fas fa-triangle-exclamation" style="color:var(--accent3);"></i> Low Stock Alert</div>
+          </div>
+          ${lowStock.length === 0
+                ? `<div class="empty-state"><i class="fas fa-check-circle" style="color:var(--accent2);"></i>All stock levels OK</div>`
+                : lowStock.slice(0,8).map(p => {
+                    const pct = Math.max(5, Math.round((p.quantity / p.minStockLevel) * 100));
+                    return `
+                <div class="low-stock-item">
+                  <div>
+                    <div style="font-size:13px;font-weight:600;">${p.name}</div>
+                    <div class="ls-bar-wrap">
+                      <div class="ls-bar"><div class="ls-fill" style="width:${Math.min(pct,100)}%;"></div></div>
+                    </div>
+                  </div>
+                  <div class="ls-qty">${p.quantity} left</div>
+                </div>`;
+                }).join('')}
+        </div>
+      </div>`;
+        } catch(e) {
+            document.getElementById('content').innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-plug" style="color:var(--danger);"></i>
+        <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:8px;">Cannot connect to API</div>
+        <div>${e.message}</div>
+      </div>`;
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────────
+    // PRODUCTS
+    // ─────────────────────────────────────────────────────────────────────────────
+    async function products(filter = 'all', keyword = '') {
+        document.getElementById('content').innerHTML = `<div class="loader"><div class="spinner"></div></div>`;
+        try {
+            const [data, cats, sups] = await Promise.all([
+                api('/products'), api('/categories'), api('/suppliers')
+            ]);
+            let filtered = data;
+            if (filter === 'low')  filtered = data.filter(p => p.quantity > 0 && p.quantity <= p.minStockLevel);
+            if (filter === 'out')  filtered = data.filter(p => p.quantity === 0);
+            if (keyword) filtered = filtered.filter(p =>
+                p.name.toLowerCase().includes(keyword.toLowerCase()) ||
+                p.sku.toLowerCase().includes(keyword.toLowerCase()));
+
+            document.getElementById('content').innerHTML = `
+      <div class="section">
+        <div class="section-header">
+          <div class="section-title"><i class="fas fa-box"></i> Products (${filtered.length})</div>
+          <div class="section-actions">
+            <button class="btn btn-primary" onclick="openProductModal(null, ${JSON.stringify(cats).replace(/"/g,'&quot;')}, ${JSON.stringify(sups).replace(/"/g,'&quot;')})">
+              <i class="fas fa-plus"></i> Add Product
+            </button>
+          </div>
+        </div>
+        <div class="tabs">
+          <div class="tab ${filter==='all'?'active':''}" onclick="products('all','${keyword}')">All (${data.length})</div>
+          <div class="tab ${filter==='low'?'active':''}" onclick="products('low','${keyword}')">Low Stock (${data.filter(p=>p.quantity>0&&p.quantity<=p.minStockLevel).length})</div>
+          <div class="tab ${filter==='out'?'active':''}" onclick="products('out','${keyword}')">Out of Stock (${data.filter(p=>p.quantity===0).length})</div>
+        </div>
+        <div class="toolbar">
+          <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Search by name or SKU…" value="${keyword}"
+              onkeyup="if(event.key==='Enter') products('${filter}',this.value)" id="prod-search"/>
+          </div>
+          <button class="btn btn-ghost" onclick="products('${filter}',document.getElementById('prod-search').value)">
+            <i class="fas fa-search"></i> Search
+          </button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>SKU</th><th>Name</th><th>Category</th><th>Supplier</th>
+              <th>Qty</th><th>Unit Price</th><th>Status</th><th>Actions</th>
+            </tr></thead>
+            <tbody>
+              ${filtered.length === 0 ? `<tr><td colspan="8"><div class="empty-state"><i class="fas fa-box-open"></i>No products found</div></td></tr>` :
+                filtered.map(p => {
+                    const status = p.quantity === 0 ? 'out' : p.quantity <= p.minStockLevel ? 'low' : 'active';
+                    const statusLabel = p.quantity === 0 ? 'Out of Stock' : p.quantity <= p.minStockLevel ? 'Low Stock' : 'In Stock';
+                    return `<tr>
+                    <td><span class="mono">${p.sku}</span></td>
+                    <td class="fw600">${p.name}</td>
+                    <td>${p.category?.name || '<span style="color:var(--muted)">—</span>'}</td>
+                    <td>${p.supplier?.name || '<span style="color:var(--muted)">—</span>'}</td>
+                    <td><strong style="color:${p.quantity===0?'var(--danger)':p.quantity<=p.minStockLevel?'var(--accent3)':'var(--accent2)'}">${p.quantity}</strong></td>
+                    <td>${p.unitPrice?.toLocaleString() || 0}₫</td>
+                    <td><span class="pill pill-${status}">${statusLabel}</span></td>
+                    <td><div class="action-cell">
+                      <div class="act-btn edit" onclick='openProductModal(${JSON.stringify(p)}, ${JSON.stringify(cats)}, ${JSON.stringify(sups)})' title="Edit"><i class="fas fa-pen"></i></div>
+                      <div class="act-btn view" onclick="openStockModal(${p.id},'${p.name}')" title="Adjust Stock"><i class="fas fa-warehouse"></i></div>
+                      <div class="act-btn del" onclick="deleteProduct(${p.id})" title="Delete"><i class="fas fa-trash"></i></div>
+                    </div></td>
+                  </tr>`;
+                }).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>`;
+        } catch(e) { showError(e.message); }
+    }
+
+    function openProductModal(product, cats, suppliers) {
+        const isEdit = !!product;
+        openModal(isEdit ? 'Edit Product' : 'Add New Product', `
+    <div class="form-grid">
+      <div class="form-group"><label>SKU *</label><input id="f-sku" value="${product?.sku||''}" placeholder="SP001"/></div>
+      <div class="form-group"><label>Unit</label><input id="f-unit" value="${product?.unit||'piece'}" placeholder="piece"/></div>
+      <div class="form-group span2"><label>Name *</label><input id="f-name" value="${product?.name||''}" placeholder="Product name"/></div>
+      <div class="form-group span2"><label>Description</label><textarea id="f-desc">${product?.description||''}</textarea></div>
+      <div class="form-group"><label>Unit Price</label><input id="f-uprice" type="number" value="${product?.unitPrice||0}"/></div>
+      <div class="form-group"><label>Cost Price</label><input id="f-cprice" type="number" value="${product?.costPrice||0}"/></div>
+      <div class="form-group"><label>Initial Quantity</label><input id="f-qty" type="number" value="${product?.quantity || 0}" min="0"/></div>
+      <div class="form-group"><label>Min Stock Level</label><input id="f-min" type="number" value="${product?.minStockLevel||10}"/></div>
+      <div class="form-group"><label>Max Stock Level</label><input id="f-max" type="number" value="${product?.maxStockLevel||1000}"/></div>
+      <div class="form-group"><label>Category</label>
+        <select id="f-cat">
+          <option value="">— None —</option>
+          ${cats.map(c=>`<option value="${c.id}" ${product?.category?.id===c.id?'selected':''}>${c.name}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group"><label>Supplier</label>
+        <select id="f-sup">
+          <option value="">— None —</option>
+          ${suppliers.map(s=>`<option value="${s.id}" ${product?.supplier?.id===s.id?'selected':''}>${s.name}</option>`).join('')}
+        </select>
+      </div>
+    </div>`,
+            `<button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+     <button class="btn btn-primary" onclick="saveProduct(${product?.id||'null'})">
+       <i class="fas fa-save"></i> ${isEdit?'Update':'Create'}
+     </button>`
+        );
+    }
+
+    async function saveProduct(id) {
+        const body = {
+            sku: document.getElementById('f-sku').value,
+            name: document.getElementById('f-name').value,
+            description: document.getElementById('f-desc').value,
+            unitPrice: parseFloat(document.getElementById('f-uprice').value)||0,
+            costPrice: parseFloat(document.getElementById('f-cprice').value)||0,
+            quantity: parseInt(document.getElementById('f-qty').value) || 0,
+            minStockLevel: parseInt(document.getElementById('f-min').value)||10,
+            maxStockLevel: parseInt(document.getElementById('f-max').value)||1000,
+            unit: document.getElementById('f-unit').value||'piece',
+        };
+        const catId = document.getElementById('f-cat').value;
+        const supId = document.getElementById('f-sup').value;
+        const params = `${catId?`?categoryId=${catId}`:''}${supId?`${catId?'&':'?'}supplierId=${supId}`:''}`;
+        try {
+            if (id) await api(`/products/${id}${params}`, 'PUT', body);
+            else     await api(`/products${params}`, 'POST', body);
+            toast(id ? 'Product updated!' : 'Product created!');
+            closeModal(); products();
+        } catch(e) { toast(e.message, 'error'); }
+    }
+
+    async function deleteProduct(id) {
+        if (!confirm('Delete this product?')) return;
+        try { await api(`/products/${id}`, 'DELETE'); toast('Product deleted!'); products(); }
+        catch(e) { toast(e.message, 'error'); }
+    }
+
+    function openStockModal(productId, productName) {
+        openModal(`Adjust Stock — ${productName}`, `
+    <div class="form-grid full">
+      <div class="form-group"><label>Movement Type</label>
+        <select id="sm-type">
+          <option value="in">Stock IN (Receive)</option>
+          <option value="out">Stock OUT (Remove/Sell)</option>
+          <option value="adjust">Adjustment (Set exact quantity)</option>
+          <option value="return">Return</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Quantity</label><input id="sm-qty" type="number" min="1" value="1"/></div>
+      <div class="form-group"><label>User ID</label><input id="sm-uid" type="number" value="1" placeholder="1"/></div>
+      <div class="form-group"><label>Reason</label><input id="sm-reason" placeholder="e.g. Restock, Sale, Damaged"/></div>
+    </div>`,
+            `<button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+     <button class="btn btn-success" onclick="saveStockMovement(${productId})"><i class="fas fa-check"></i> Confirm</button>`
+        );
+    }
+
+    async function saveStockMovement(productId) {
+        const type    = document.getElementById('sm-type').value;
+        const qty     = parseInt(document.getElementById('sm-qty').value);
+        const userId  = parseInt(document.getElementById('sm-uid').value)||1;
+        const reason  = document.getElementById('sm-reason').value;
+        const endpoints = { in: '/stock-movements/stock-in', out: '/stock-movements/stock-out',
+            adjust: '/stock-movements/adjust', return: '/stock-movements/return' };
+        const body = type === 'adjust'
+            ? { productId, userId, newQuantity: qty, reason }
+            : { productId, userId, quantity: qty, reason };
+        try {
+            await api(endpoints[type], 'POST', body);
+            toast('Stock updated!'); closeModal(); products();
+        } catch(e) { toast(e.message, 'error'); }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────────
+    // CATEGORIES
+    // ─────────────────────────────────────────────────────────────────────────────
+    async function categories() {
+        document.getElementById('content').innerHTML = `<div class="loader"><div class="spinner"></div></div>`;
+        try {
+            const data = await api('/categories');
+            document.getElementById('content').innerHTML = `
+      <div class="section">
+        <div class="section-header">
+          <div class="section-title"><i class="fas fa-tags"></i> Categories (${data.length})</div>
+          <button class="btn btn-primary" onclick="openCategoryModal(null)"><i class="fas fa-plus"></i> Add Category</button>
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>#</th><th>Name</th><th>Description</th><th>Created</th><th>Actions</th></tr></thead>
+          <tbody>
+            ${data.length === 0 ? `<tr><td colspan="5"><div class="empty-state"><i class="fas fa-tags"></i>No categories yet</div></td></tr>` :
+                data.map(c => `<tr>
+                <td class="mono">${c.id}</td>
+                <td class="fw600">${c.name}</td>
+                <td style="color:var(--muted)">${c.description||'—'}</td>
+                <td class="mono">${c.createdAt ? c.createdAt.substring(0,10) : '—'}</td>
+                <td><div class="action-cell">
+                  <div class="act-btn edit" onclick='openCategoryModal(${JSON.stringify(c)})' title="Edit"><i class="fas fa-pen"></i></div>
+                  <div class="act-btn del" onclick="deleteCategory(${c.id})" title="Delete"><i class="fas fa-trash"></i></div>
+                </div></td>
+              </tr>`).join('')}
+          </tbody>
+        </table></div>
+      </div>`;
+        } catch(e) { showError(e.message); }
+    }
+
+    function openCategoryModal(cat) {
+        openModal(cat ? 'Edit Category' : 'Add Category', `
+    <div class="form-grid full">
+      <div class="form-group"><label>Name *</label><input id="c-name" value="${cat?.name||''}" placeholder="e.g. Electronics"/></div>
+      <div class="form-group"><label>Description</label><textarea id="c-desc">${cat?.description||''}</textarea></div>
+    </div>`,
+            `<button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+     <button class="btn btn-primary" onclick="saveCategory(${cat?.id||'null'})"><i class="fas fa-save"></i> ${cat?'Update':'Create'}</button>`
+        );
+    }
+
+    async function saveCategory(id) {
+        const body = { name: document.getElementById('c-name').value, description: document.getElementById('c-desc').value };
+        try {
+            if (id) await api(`/categories/${id}`, 'PUT', body);
+            else    await api('/categories', 'POST', body);
+            toast(id ? 'Category updated!' : 'Category created!');
+            closeModal(); categories();
+        } catch(e) { toast(e.message, 'error'); }
+    }
+
+    async function deleteCategory(id) {
+        if (!confirm('Delete this category?')) return;
+        try { await api(`/categories/${id}`, 'DELETE'); toast('Category deleted!'); categories(); }
+        catch(e) { toast(e.message, 'error'); }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────────
+    // SUPPLIERS
+    // ─────────────────────────────────────────────────────────────────────────────
+    async function suppliers() {
+        document.getElementById('content').innerHTML = `<div class="loader"><div class="spinner"></div></div>`;
+        try {
+            const data = await api('/suppliers');
+            document.getElementById('content').innerHTML = `
+      <div class="section">
+        <div class="section-header">
+          <div class="section-title"><i class="fas fa-truck"></i> Suppliers (${data.length})</div>
+          <button class="btn btn-primary" onclick="openSupplierModal(null)"><i class="fas fa-plus"></i> Add Supplier</button>
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>#</th><th>Name</th><th>Contact</th><th>Email</th><th>Phone</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>
+            ${data.length === 0 ? `<tr><td colspan="7"><div class="empty-state"><i class="fas fa-truck"></i>No suppliers yet</div></td></tr>` :
+                data.map(s => `<tr>
+                <td class="mono">${s.id}</td>
+                <td class="fw600">${s.name}</td>
+                <td>${s.contactName||'—'}</td>
+                <td>${s.email||'—'}</td>
+                <td>${s.phone||'—'}</td>
+                <td><span class="pill ${s.isActive?'pill-active':'pill-inactive'}">${s.isActive?'Active':'Inactive'}</span></td>
+                <td><div class="action-cell">
+                  <div class="act-btn edit" onclick='openSupplierModal(${JSON.stringify(s)})' title="Edit"><i class="fas fa-pen"></i></div>
+                  <div class="act-btn del" onclick="deactivateSupplier(${s.id})" title="Deactivate"><i class="fas fa-ban"></i></div>
+                  <div class="act-btn del" onclick="deleteSupplier(${s.id})" title="Delete"><i class="fas fa-trash"></i></div>
+                </div></td>
+              </tr>`).join('')}
+          </tbody>
+        </table></div>
+      </div>`;
+        } catch(e) { showError(e.message); }
+    }
+
+    function openSupplierModal(sup) {
+        openModal(sup ? 'Edit Supplier' : 'Add Supplier', `
+    <div class="form-grid">
+      <div class="form-group span2"><label>Company Name *</label><input id="s-name" value="${sup?.name||''}" placeholder="Dell Vietnam"/></div>
+      <div class="form-group"><label>Contact Name</label><input id="s-contact" value="${sup?.contactName||''}"/></div>
+      <div class="form-group"><label>Email</label><input id="s-email" type="email" value="${sup?.email||''}"/></div>
+      <div class="form-group"><label>Phone</label><input id="s-phone" value="${sup?.phone||''}"/></div>
+      <div class="form-group span2"><label>Address</label><textarea id="s-addr">${sup?.address||''}</textarea></div>
+    </div>`,
+            `<button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+     <button class="btn btn-primary" onclick="saveSupplier(${sup?.id||'null'})"><i class="fas fa-save"></i> ${sup?'Update':'Create'}</button>`
+        );
+    }
+
+    async function saveSupplier(id) {
+        const body = {
+            name: document.getElementById('s-name').value,
+            contactName: document.getElementById('s-contact').value,
+            email: document.getElementById('s-email').value,
+            phone: document.getElementById('s-phone').value,
+            address: document.getElementById('s-addr').value,
+        };
+        try {
+            if (id) await api(`/suppliers/${id}`, 'PUT', body);
+            else    await api('/suppliers', 'POST', body);
+            toast(id ? 'Supplier updated!' : 'Supplier created!');
+            closeModal(); suppliers();
+        } catch(e) { toast(e.message, 'error'); }
+    }
+
+    async function deactivateSupplier(id) {
+        if (!confirm('Deactivate this supplier?')) return;
+        try { await api(`/suppliers/${id}/deactivate`, 'PATCH'); toast('Supplier deactivated!'); suppliers(); }
+        catch(e) { toast(e.message, 'error'); }
+    }
+
+    async function deleteSupplier(id) {
+        if (!confirm('Permanently delete this supplier?')) return;
+        try { await api(`/suppliers/${id}`, 'DELETE'); toast('Supplier deleted!'); suppliers(); }
+        catch(e) { toast(e.message, 'error'); }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────────
+    // STOCK MOVEMENTS
+    // ─────────────────────────────────────────────────────────────────────────────
+    async function stock(typeFilter = 'ALL') {
+        document.getElementById('content').innerHTML = `<div class="loader"><div class="spinner"></div></div>`;
+        try {
+            const data = await api('/stock-movements');
+            const filtered = typeFilter === 'ALL' ? data : data.filter(m => m.type === typeFilter);
+            const counts = { ALL: data.length, IN: data.filter(m=>m.type==='IN').length,
+                OUT: data.filter(m=>m.type==='OUT').length,
+                ADJUSTMENT: data.filter(m=>m.type==='ADJUSTMENT').length,
+                RETURN: data.filter(m=>m.type==='RETURN').length };
+            document.getElementById('content').innerHTML = `
+      <div class="section">
+        <div class="section-header">
+          <div class="section-title"><i class="fas fa-exchange-alt"></i> Stock Movements (${filtered.length})</div>
+        </div>
+        <div class="tabs">
+          ${['ALL','IN','OUT','ADJUSTMENT','RETURN'].map(t =>
+                `<div class="tab ${typeFilter===t?'active':''}" onclick="stock('${t}')">${t} (${counts[t]})</div>`
+            ).join('')}
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>#</th><th>Product</th><th>Type</th><th>Qty</th><th>Reason</th><th>By</th><th>Date</th></tr></thead>
+          <tbody>
+            ${filtered.length === 0 ? `<tr><td colspan="7"><div class="empty-state"><i class="fas fa-inbox"></i>No movements</div></td></tr>` :
+                filtered.map(m => `<tr>
+                <td class="mono">${m.id}</td>
+                <td class="fw600">${m.product?.name||'—'}</td>
+                <td><span class="pill pill-${m.type.toLowerCase()}">${m.type}</span></td>
+                <td><strong>${m.quantity}</strong></td>
+                <td style="color:var(--muted)">${m.reason||'—'}</td>
+                <td>${m.user?.username||'—'}</td>
+                <td class="mono">${m.createdAt ? m.createdAt.substring(0,16).replace('T',' ') : '—'}</td>
+              </tr>`).join('')}
+          </tbody>
+        </table></div>
+      </div>`;
+        } catch(e) { showError(e.message); }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────────
+    // USERS
+    // ─────────────────────────────────────────────────────────────────────────────
+    async function users() {
+        document.getElementById('content').innerHTML = `<div class="loader"><div class="spinner"></div></div>`;
+        try {
+            const data = await api('/users');
+            document.getElementById('content').innerHTML = `
+      <div class="section">
+        <div class="section-header">
+          <div class="section-title"><i class="fas fa-users"></i> Users (${data.length})</div>
+          <button class="btn btn-primary" onclick="openUserModal(null)"><i class="fas fa-plus"></i> Add User</button>
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>#</th><th>Username</th><th>Email</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>
+            ${data.length === 0 ? `<tr><td colspan="6"><div class="empty-state"><i class="fas fa-users"></i>No users yet</div></td></tr>` :
+                data.map(u => `<tr>
+                <td class="mono">${u.id}</td>
+                <td class="fw600">${u.username}</td>
+                <td>${u.email}</td>
+                <td><span class="pill ${u.role==='ADMIN'?'pill-in':u.role==='MANAGER'?'pill-adjustment':'pill-inactive'}">${u.role}</span></td>
+                <td><span class="pill ${u.isActive?'pill-active':'pill-inactive'}">${u.isActive?'Active':'Inactive'}</span></td>
+                <td><div class="action-cell">
+                  <div class="act-btn edit" onclick='openUserModal(${JSON.stringify(u)})' title="Edit"><i class="fas fa-pen"></i></div>
+                  <div class="act-btn del" onclick="deactivateUser(${u.id})" title="Deactivate"><i class="fas fa-ban"></i></div>
+                  <div class="act-btn del" onclick="deleteUser(${u.id})" title="Delete"><i class="fas fa-trash"></i></div>
+                </div></td>
+              </tr>`).join('')}
+          </tbody>
+        </table></div>
+      </div>`;
+        } catch(e) { showError(e.message); }
+    }
+
+    function openUserModal(user) {
+        openModal(user ? 'Edit User' : 'Add User', `
+    <div class="form-grid">
+      <div class="form-group"><label>Username *</label><input id="u-uname" value="${user?.username||''}"/></div>
+      <div class="form-group"><label>Email *</label><input id="u-email" type="email" value="${user?.email||''}"/></div>
+      ${!user ? `<div class="form-group span2"><label>Password *</label><input id="u-pass" type="password" placeholder="••••••••"/></div>` : ''}
+      <div class="form-group span2"><label>Role</label>
+        <select id="u-role">
+          <option value="STAFF"   ${user?.role==='STAFF'  ?'selected':''}>Staff</option>
+          <option value="MANAGER" ${user?.role==='MANAGER'?'selected':''}>Manager</option>
+          <option value="ADMIN"   ${user?.role==='ADMIN'  ?'selected':''}>Admin</option>
+        </select>
+      </div>
+    </div>`,
+            `<button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+     <button class="btn btn-primary" onclick="saveUser(${user?.id||'null'})"><i class="fas fa-save"></i> ${user?'Update':'Create'}</button>`
+        );
+    }
+
+    async function saveUser(id) {
+        const body = {
+            username: document.getElementById('u-uname').value,
+            email:    document.getElementById('u-email').value,
+            role:     document.getElementById('u-role').value,
+        };
+        if (!id) body.password = document.getElementById('u-pass').value;
+        try {
+            if (id) await api(`/users/${id}`, 'PUT', body);
+            else    await api('/users', 'POST', body);
+            toast(id ? 'User updated!' : 'User created!');
+            closeModal(); users();
+        } catch(e) { toast(e.message, 'error'); }
+    }
+
+    async function deactivateUser(id) {
+        if (!confirm('Deactivate this user?')) return;
+        try { await api(`/users/${id}/deactivate`, 'PATCH'); toast('User deactivated!'); users(); }
+        catch(e) { toast(e.message, 'error'); }
+    }
+
+    async function deleteUser(id) {
+        if (!confirm('Permanently delete this user?')) return;
+        try { await api(`/users/${id}`, 'DELETE'); toast('User deleted!'); users(); }
+        catch(e) { toast(e.message, 'error'); }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────────
+    // UTILS
+    // ─────────────────────────────────────────────────────────────────────────────
+    function showError(msg) {
+        document.getElementById('content').innerHTML = `
+    <div class="empty-state">
+      <i class="fas fa-circle-xmark" style="color:var(--danger);"></i>
+      <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:8px;">Error</div>
+      <div>${msg}</div>
+    </div>`;
+    }
+
+    // Check API connectivity
+    async function checkApiStatus() {
+        try {
+            await fetch(API + '/categories');
+            document.getElementById('api-status-btn').innerHTML = '<i class="fas fa-circle" style="color:var(--accent2);font-size:10px;" title="API Connected"></i>';
+        } catch {
+            document.getElementById('api-status-btn').innerHTML = '<i class="fas fa-circle" style="color:var(--danger);font-size:10px;" title="API Offline"></i>';
+        }
+    }
+
+    // ── INIT ─────────────────────────────────────────────────────────────────────
+    checkApiStatus();
+    dashboard();
+</script>
+</body>
+</html>
