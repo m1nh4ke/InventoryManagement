@@ -6,12 +6,15 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public List<User> getAllUsers(){
         return userRepository.findAll();
@@ -46,6 +49,7 @@ public class UserService {
         }
 
         //hash password//
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         user.setIsActive(true);
         if(user.getRole() == null)  user.setRole(User.Role.STAFF);
@@ -75,7 +79,7 @@ public class UserService {
     public void changePassword(Long id, String newPassword){
         User user = getUserById(id);
         //hash new pw//
-        user.setPassword(newPassword);
+        user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }
 
@@ -92,16 +96,5 @@ public class UserService {
             throw new RuntimeException("User not found with id: " + id);
         }
         userRepository.deleteById(id);
-    }
-
-    public User login(String username, String password){
-        User user = getUserByUsername(username);
-        if(!user.getPassword().equals(password)){
-            throw new RuntimeException("Wrong password or username!");
-        }
-        if(!user.getIsActive()){
-            throw new RuntimeException("Your account has been deactivated!");
-        }
-        return user;
     }
 }

@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Inventory Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f1117;
+            --bg2: #181c27;
+            --bg3: #1e2335;
+            --border: #2a3047;
+            --accent: #4f8ef7;
+            --text: #e8eaf2;
+            --muted: #7a849e;
+            --danger: #f7604f;
+            --radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .login-card {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            width: 400px;
+            padding: 40px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--accent), transparent, var(--accent));
+            border-radius: 22px;
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--accent);
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 15px;
+            box-shadow: 0 8px 20px rgba(79, 142, 247, 0.4);
+        }
+
+        h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        p.subtitle {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 14px 12px 40px;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(79, 142, 247, 0.1);
+        }
+
+        .btn-login {
+            width: 100%;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 14px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-login:hover {
+            background: #3a7de8;
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(79, 142, 247, 0.3);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .error-msg {
+            background: rgba(247, 96, 79, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(247, 96, 79, 0.2);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 20px;
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .loader {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            display: none;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .bg-blobs {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 0;
+            filter: blur(80px);
+            opacity: 0.4;
+        }
+
+        .blob {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: var(--accent);
+        }
+
+        .blob-1 { top: -100px; right: -100px; background: #4f8ef7; }
+        .blob-2 { bottom: -100px; left: -100px; background: #38d9a9; }
+    </style>
+</head>
+<body>
+    <div class="bg-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <div class="login-card">
+        <div class="logo-section">
+            <div class="logo-icon"><i class="fas fa-boxes-stacked"></i></div>
+            <h2>Welcome Back</h2>
+            <p class="subtitle">Log in to manage your inventory</p>
+        </div>
+
+        <div id="error" class="error-msg">
+            <i class="fas fa-circle-exclamation"></i>
+            <span id="error-text">Invalid credentials</span>
+        </div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="username" placeholder="Enter username" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" placeholder="Enter password" required>
+                </div>
+            </div>
+            <button type="submit" class="btn-login" id="submitBtn">
+                <span id="btnText">Log In</span>
+                <div id="loader" class="loader"></div>
+            </button>
+        </form>
+    </div>
+
+    <script>
+        const API = 'http://localhost:8080/api';
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('error');
+            const errorText = document.getElementById('error-text');
+            const btnText = document.getElementById('btnText');
+            const loader = document.getElementById('loader');
+            const submitBtn = document.getElementById('submitBtn');
+
+            // Reset state
+            errorDiv.style.display = 'none';
+            btnText.style.display = 'none';
+            loader.style.display = 'inline-block';
+            submitBtn.disabled = true;
+
+            try {
+                const response = await fetch(`${API}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Success! Store token and redirect
+                    localStorage.setItem('token', data.accessToken);
+                    localStorage.setItem('username', username);
+                    localStorage.setItem('role', data.role);
+                    window.location.href = '/Index.html';
+                } else {
+                    throw new Error(data.message || 'Login failed. Please check your credentials.');
+                }
+            } catch (err) {
+                errorText.textContent = err.message;
+                errorDiv.style.display = 'flex';
+                btnText.style.display = 'inline-block';
+                loader.style.display = 'none';
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Check if already logged in
+        if (localStorage.getItem('token')) {
+            // Optional: window.location.href = '/Index.html';
+        }
+    </script>
+</body>
+</html>
