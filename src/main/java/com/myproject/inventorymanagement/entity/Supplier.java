@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -45,7 +44,7 @@ public class Supplier {
     @Column(name = "updated_at")
     private LocalDateTime updateddAt;
 
-    @OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "supplier", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Product> products = new ArrayList<>();
 

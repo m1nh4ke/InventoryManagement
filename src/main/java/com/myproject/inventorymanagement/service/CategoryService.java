@@ -36,12 +36,7 @@ public class CategoryService {
     @Transactional
     public Category updateCategory(Long id, Category updated){
         Category existing = getCategoryById(id);
-
-        if(!existing.getName().equalsIgnoreCase(updated.getName()) && categoryRepository.existsByNameIgnoreCase(updated.getName())){
-            throw new RuntimeException("Category name already exists: " + updated.getName());
-        }
-
-        existing.setName(updated.getName());
+        // Category name is fixed and cannot be changed
         existing.setDescription(updated.getDescription());
         return categoryRepository.save(existing);
     }

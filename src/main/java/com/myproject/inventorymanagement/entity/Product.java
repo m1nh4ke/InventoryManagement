@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name="products")
+@Table(name = "products")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,12 +29,6 @@ public class Product {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "unit_price", nullable = false)
-    private Double unitPrice = 0.0;
-
-    @Column(name = "cost_price", nullable = false)
-    private Double costPrice = 0.0;
-
     @Column(name = "quantity", nullable = false)
     private Integer quantity = 0;
 
@@ -47,12 +41,6 @@ public class Product {
     @Column(name = "unit", length = 50)
     private String unit;
 
-    @Column(name = "image_url", length = 255)
-    private String imageUrl;
-
-    @Column(name = "is_active")
-    private Boolean isActive = true;
-
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
@@ -61,12 +49,12 @@ public class Product {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
-    @JsonIgnoreProperties({"products", "stockMovements"})
+    @JsonIgnoreProperties({ "products", "stockMovements" })
     private Category category;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "supplier_id")
-    @JsonIgnoreProperties({"products", "stockMovements"})
+    @JsonIgnoreProperties({ "products", "stockMovements" })
     private Supplier supplier;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -74,17 +62,17 @@ public class Product {
     private List<StockMovement> stockMovements = new ArrayList<>();
 
     @Transient
-    public boolean isLowStock(){
+    public boolean isLowStock() {
         return this.quantity <= this.minStockLevel;
     }
 
     @Transient
-    public boolean isOutOfStock(){
+    public boolean isOutOfStock() {
         return this.quantity == 0;
     }
 
     @PrePersist
-    public void prePersist(){
+    public void prePersist() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }

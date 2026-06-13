@@ -44,13 +44,32 @@ public class SecurityConfig {
                         .requestMatchers("/", "/index.html", "/login.html", "/static/**", "/*.html", "/*.js", "/*.css",
                                 "/favicon.ico")
                         .permitAll()
+                        // 1. User Management (ADMIN only)
                         .requestMatchers("/api/users/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/categories/**", "/api/suppliers/**")
-                        .hasAnyRole("ADMIN", "MANAGER", "STAFF")
-                        .requestMatchers("/api/categories/**", "/api/suppliers/**", "/api/statistics/**")
-                        .hasAnyRole("ADMIN", "MANAGER")
-                        .requestMatchers("/api/products/**", "/api/stock-movements/**")
-                        .hasAnyRole("ADMIN", "MANAGER", "STAFF")
+                        
+                        // 2. Products, Categories, Suppliers (MANAGER and STAFF can CRUD)
+                        .requestMatchers("/api/products/**").hasAnyRole("MANAGER", "STAFF")
+                        .requestMatchers("/api/categories/**").hasAnyRole("MANAGER", "STAFF")
+                        .requestMatchers("/api/suppliers/**").hasAnyRole("MANAGER", "STAFF")
+                        
+                        // 3. Stock Requests
+                        // - Approval/Rejection (MANAGER only)
+                        .requestMatchers(HttpMethod.POST, "/api/stock-requests/*/approve", "/api/stock-requests/*/reject")
+                        .hasRole("MANAGER")
+                        // - Creation (STAFF only)
+                        .requestMatchers(HttpMethod.POST, "/api/stock-requests").hasRole("STAFF")
+                        // - Viewing/Details/Exporting (MANAGER and STAFF)
+                        .requestMatchers("/api/stock-requests/**").hasAnyRole("MANAGER", "STAFF")
+                        
+                        // 4. Invoices (MANAGER and STAFF)
+                        .requestMatchers("/api/invoices/**").hasAnyRole("MANAGER", "STAFF")
+                        
+                        // 4. Stock Movements (MANAGER only)
+                        .requestMatchers("/api/stock-movements/**").hasRole("MANAGER")
+                        
+                        // 5. Statistics/Dashboard (MANAGER only)
+                        .requestMatchers("/api/statistics/**").hasRole("MANAGER")
+                        
                         .anyRequest().authenticated());
 
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

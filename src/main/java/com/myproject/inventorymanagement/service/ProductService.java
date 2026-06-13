@@ -19,11 +19,11 @@ public class ProductService {
     private final SupplierRepository supplierRepository;
 
     public List<Product> getAllProducts(){
-        return productRepository.findAll();
+        return productRepository.findAllByOrderByNameAsc();
     }
 
     public List<Product> getActiveProducts(){
-        return productRepository.findByIsActiveTrue();
+        return productRepository.findAllByOrderByNameAsc();
     }
 
     public Product getProductById(Long id){
@@ -37,11 +37,11 @@ public class ProductService {
     }
 
     public List<Product> getProductsByCategory(Long categoryId){
-        return productRepository.findByCategoryId((categoryId));
+        return productRepository.findByCategoryIdOrderByNameAsc((categoryId));
     }
 
     public List<Product> getProductsBySupplier(Long supplierId){
-        return productRepository.findBySupplierId(supplierId);
+        return productRepository.findBySupplierIdOrderByNameAsc(supplierId);
     }
 
     public List<Product> searchProducts(String keyword){
@@ -53,13 +53,23 @@ public class ProductService {
     }
 
     public List<Product> getOutOfStockProducts(){
-        return productRepository.findByQuantityAndIsActiveTrue(0);
+        return productRepository.findByQuantity(0);
     }
 
     @Transactional
     public Product createProduct(Product product, Long categoryId, Long supplierId){
-        if(productRepository.existsBySku(product.getSku())){
+        if(productRepository.existsBySkuIgnoreCase(product.getSku())){
             throw new RuntimeException("SKU already exists: " + product.getSku());
+        }
+        if(productRepository.existsByNameIgnoreCase(product.getName())){
+            throw new RuntimeException("Product name already exists: " + product.getName());
+        }
+
+        if (product.getMinStockLevel() == null || product.getMinStockLevel() < 0) {
+            throw new RuntimeException("Định mức tối thiểu phải là số nguyên >= 0");
+        }
+        if (product.getMaxStockLevel() == null || product.getMaxStockLevel() < 0) {
+            throw new RuntimeException("Định mức tối đa phải là số nguyên >= 0");
         }
 
         if(categoryId != null){
@@ -74,7 +84,9 @@ public class ProductService {
             product.setSupplier(supplier);
         }
 
-        product.setIsActive(true);
+        if (product.getQuantity() == null) {
+            product.setQuantity(0);
+        }
         return productRepository.save(product);
     }
 
@@ -82,19 +94,18 @@ public class ProductService {
     public Product updateProduct(Long id, Product updated, Long categoryId, Long supplierId){
         Product existing = getProductById(id);
 
-        if(!existing.getSku().equalsIgnoreCase(updated.getSku()) && productRepository.existsBySku(updated.getSku())){
-            throw new RuntimeException("SKU already exists: " + updated.getSku());
+        if (updated.getMinStockLevel() == null || updated.getMinStockLevel() < 0) {
+            throw new RuntimeException("Định mức tối thiểu phải là số nguyên >= 0");
+        }
+        if (updated.getMaxStockLevel() == null || updated.getMaxStockLevel() < 0) {
+            throw new RuntimeException("Định mức tối đa phải là số nguyên >= 0");
         }
 
-        existing.setSku(updated.getSku());
-        existing.setName(updated.getName());
+        // SKU and Name are fixed and cannot be changed
         existing.setDescription(updated.getDescription());
-        existing.setUnitPrice(updated.getUnitPrice());
-        existing.setCostPrice(updated.getCostPrice());
         existing.setMinStockLevel(updated.getMinStockLevel());
         existing.setMaxStockLevel(updated.getMaxStockLevel());
         existing.setUnit(updated.getUnit());
-        existing.setImageUrl(updated.getImageUrl());
 
         if(categoryId != null){
             Category category = categoryRepository.findById(categoryId)
@@ -132,15 +143,13 @@ public class ProductService {
         if(product.getQuantity() < quantity){
             throw new RuntimeException("Not enough stock. Available: " + product.getQuantity());
         }
-        product.setQuantity(product.getQuantity() + quantity);
+        product.setQuantity(product.getQuantity() - quantity);
         return productRepository.save(product);
     }
 
     @Transactional
     public void deactivateProduct(Long id) {
-        Product product = getProductById(id);
-        product.setIsActive(false);
-        productRepository.save(product);
+        deleteProduct(id);
     }
 
     // ── Hard delete ──────────────────────────────────────────────────────────

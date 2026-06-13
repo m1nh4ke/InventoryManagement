@@ -40,11 +40,11 @@ public class UserService {
 
     @Transactional
     public User createUser(User user){
-        if(userRepository.existsByUsername(user.getUsername())){
+        if(userRepository.existsByUsernameIgnoreCase(user.getUsername())){
             throw new RuntimeException("Username already taken: " + user.getUsername());
         }
 
-        if(userRepository.existsByEmail(user.getEmail())){
+        if(userRepository.existsByEmailIgnoreCase(user.getEmail())){
             throw new RuntimeException("Email already registered: " + user.getEmail());
         }
 
@@ -61,11 +61,11 @@ public class UserService {
     public User updateUser(Long id, User updated){
         User existing = getUserById(id);
 
-        if(!existing.getUsername().equalsIgnoreCase(updated.getUsername()) && userRepository.existsByUsername(updated.getUsername())){
+        if(!existing.getUsername().equalsIgnoreCase(updated.getUsername()) && userRepository.existsByUsernameIgnoreCase(updated.getUsername())){
             throw new RuntimeException("Username already taken: " + updated.getUsername());
         }
 
-        if(!existing.getEmail().equalsIgnoreCase(updated.getEmail()) && userRepository.existsByEmail(updated.getEmail())){
+        if(!existing.getEmail().equalsIgnoreCase(updated.getEmail()) && userRepository.existsByEmailIgnoreCase(updated.getEmail())){
             throw new RuntimeException("Email already registered: "+ updated.getEmail());
         }
 
@@ -86,7 +86,7 @@ public class UserService {
     @Transactional
     public  void deactivateUser(Long id){
         User user = getUserById(id);
-        user.setIsActive(false);
+        user.setIsActive(user.getIsActive() == null || !user.getIsActive());
         userRepository.save(user);
     }
 

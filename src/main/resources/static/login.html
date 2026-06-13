@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | Inventory Management System</title>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>Login | IMSVN</title>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
@@ -26,7 +26,7 @@
         }
 
         body {
-            font-family: 'DM Sans', sans-serif;
+            font-family: 'Be Vietnam Pro', sans-serif;
             background: var(--bg);
             color: var(--text);
             height: 100vh;
@@ -214,9 +214,9 @@
 
     <div class="login-card">
         <div class="logo-section">
-            <div class="logo-icon"><i class="fas fa-boxes-stacked"></i></div>
-            <h2>Welcome Back</h2>
-            <p class="subtitle">Log in to manage your inventory</p>
+            <div class="logo-icon"><i class="fa-solid fa-warehouse"></i></div>
+            <h2>Chào mừng trở lại!</h2>
+            <p class="subtitle">Đăng nhập để quản lý kho hàng của bạn</p>
         </div>
 
         <div id="error" class="error-msg">
@@ -226,21 +226,21 @@
 
         <form id="loginForm">
             <div class="form-group">
-                <label for="username">Username</label>
+                <label for="username">Tên đăng nhập</label>
                 <div class="input-wrapper">
                     <i class="fas fa-user"></i>
-                    <input type="text" id="username" placeholder="Enter username" required>
+                    <input type="text" id="username" placeholder="Nhập tên đăng nhập" required>
                 </div>
             </div>
             <div class="form-group">
-                <label for="password">Password</label>
+                <label for="password">Mật khẩu</label>
                 <div class="input-wrapper">
                     <i class="fas fa-lock"></i>
-                    <input type="password" id="password" placeholder="Enter password" required>
+                    <input type="password" id="password" placeholder="Nhập mật khẩu" required>
                 </div>
             </div>
             <button type="submit" class="btn-login" id="submitBtn">
-                <span id="btnText">Log In</span>
+                <span id="btnText">Đăng nhập</span>
                 <div id="loader" class="loader"></div>
             </button>
         </form>
@@ -260,7 +260,6 @@
             const loader = document.getElementById('loader');
             const submitBtn = document.getElementById('submitBtn');
 
-            // Reset state
             errorDiv.style.display = 'none';
             btnText.style.display = 'none';
             loader.style.display = 'inline-block';
@@ -276,13 +275,12 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    // Success! Store token and redirect
                     localStorage.setItem('token', data.accessToken);
                     localStorage.setItem('username', username);
                     localStorage.setItem('role', data.role);
                     window.location.href = '/Index.html';
                 } else {
-                    throw new Error(data.message || 'Login failed. Please check your credentials.');
+                    throw new Error(data.message || 'Đăng nhập không thành công. Vui lòng kiểm tra tên đăng nhập và mật khẩu');
                 }
             } catch (err) {
                 errorText.textContent = err.message;
@@ -293,9 +291,8 @@
             }
         });
 
-        // Check if already logged in
         if (localStorage.getItem('token')) {
-            // Optional: window.location.href = '/Index.html';
+            window.location.href = '/Index.html';
         }
     </script>
 </body>

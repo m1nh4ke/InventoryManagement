@@ -14,21 +14,30 @@ public interface ProductRepository extends JpaRepository<Product, Long>{
 
     List<Product> findByNameContainingIgnoreCase(String name);
 
-    List<Product> findByIsActiveTrue();
+    List<Product> findByCategoryIdOrderByNameAsc(Long categoryId);
 
-    List<Product> findByCategoryId(Long categoryId);
+    List<Product> findBySupplierIdOrderByNameAsc(Long supplierId);
 
-    List<Product> findBySupplierId(Long supplierId);
+    List<Product> findAllByOrderByNameAsc();
 
     boolean existsBySku(String sku);
 
-    @Query("SELECT p FROM Product p WHERE p.quantity <= p.minStockLevel AND p.isActive = true")
+    boolean existsBySkuIgnoreCase(String sku);
+
+    boolean existsByNameIgnoreCase(String name);
+
+    boolean existsBySkuIgnoreCaseAndIdNot(String sku, Long id);
+
+    boolean existsByNameIgnoreCaseAndIdNot(String name, Long id);
+
+    @Query("SELECT p FROM Product p WHERE p.quantity <= p.minStockLevel")
     List<Product> findLowStockProducts();
 
-    List<Product> findByQuantityAndIsActiveTrue(int quantity);
+    List<Product> findByQuantity(int quantity);
 
     @Query("SELECT p FROM Product p WHERE " +
-            "LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-            "LOWER(p.sku)  LIKE LOWER(CONCAT('%', :keyword, '%'))")
+            "(LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(p.sku)  LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
+            "ORDER BY p.name ASC")
     List<Product> searchByKeyword(@Param("keyword") String keyword);
 }

@@ -20,6 +20,8 @@ public interface StockMovementRepository extends JpaRepository<StockMovement, Lo
 
     List<StockMovement> findAllByOrderByCreatedAtDesc();
 
+    List<StockMovement> findAllByOrderByIdDesc();
+
     @Query("SELECT s FROM StockMovement s WHERE s.createdAt BETWEEN :startDate AND :endDate ORDER BY s.createdAt DESC")
     List<StockMovement> findByDateRange(
             @Param("startDate") LocalDateTime startDate,

@@ -16,7 +16,7 @@ public class SupplierController {
 
     @GetMapping
     public ResponseEntity<List<Supplier>> getAll(){
-        return  ResponseEntity.ok(supplierService.getActiveSuppliers());
+        return  ResponseEntity.ok(supplierService.getAllSuppliers());
     }
 
     @GetMapping("/active")
@@ -44,7 +44,7 @@ public class SupplierController {
         return ResponseEntity.ok(supplierService.updateSupplier(id, supplier));
     }
 
-    @PatchMapping("/(id)/deactivate")
+    @PatchMapping("/{id}/deactivate")
     public ResponseEntity<Void> deactivate(@PathVariable Long id){
         supplierService.deactivateSupplier(id);
         return ResponseEntity.noContent().build();
@@ -52,7 +52,7 @@ public class SupplierController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id){
-        supplierService.deactivateSupplier(id);
+        supplierService.deleteSupplier(id);
         return ResponseEntity.noContent().build();
     }
 }

@@ -21,7 +21,7 @@ public class StockMovementService {
     private final UserRepository userRepository;
 
     public List<StockMovement> getAllMovements(){
-        return stockMovementRepository.findAllByOrderByCreatedAtDesc();
+        return stockMovementRepository.findAllByOrderByIdDesc();
     }
 
     public StockMovement getMovementById(Long id) {

@@ -1,6 +1,7 @@
 package com.myproject.inventorymanagement.service;
 
 import com.myproject.inventorymanagement.entity.Supplier;
+import com.myproject.inventorymanagement.entity.Product;
 import com.myproject.inventorymanagement.repository.SupplierRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -31,8 +32,14 @@ public class SupplierService {
 
     @Transactional
     public Supplier createSupplier(Supplier supplier){
-        if(supplier.getEmail() != null && supplierRepository.existsByEmail(supplier.getEmail())){
+        if(supplierRepository.existsByNameIgnoreCase(supplier.getName())){
+            throw new RuntimeException("Supplier name already exists: " + supplier.getName());
+        }
+        if(supplier.getEmail() != null && !supplier.getEmail().isEmpty() && supplierRepository.existsByEmailIgnoreCase(supplier.getEmail())){
             throw new RuntimeException("Supplier email already exists: " + supplier.getEmail());
+        }
+        if(supplier.getPhone() != null && !supplier.getPhone().isEmpty() && supplierRepository.existsByPhone(supplier.getPhone())){
+            throw new RuntimeException("Supplier phone already exists: " + supplier.getPhone());
         }
 
         supplier.setIsActive(true);
@@ -43,11 +50,14 @@ public class SupplierService {
     public Supplier updateSupplier(Long id, Supplier updated){
         Supplier existing = getSupplierById(id);
 
-        if(updated.getEmail() != null && !updated.getEmail().equalsIgnoreCase(existing.getEmail()) && supplierRepository.existsByEmail(updated.getEmail())){
+        if(updated.getEmail() != null && !updated.getEmail().isEmpty() && supplierRepository.existsByEmailIgnoreCaseAndIdNot(updated.getEmail(), id)){
             throw new RuntimeException("Email already used: " + updated.getEmail());
         }
+        if(updated.getPhone() != null && !updated.getPhone().isEmpty() && supplierRepository.existsByPhoneAndIdNot(updated.getPhone(), id)){
+            throw new RuntimeException("Phone already used: " + updated.getPhone());
+        }
 
-        existing.setName(updated.getName());
+        // Supplier name is fixed and cannot be changed
         existing.setContactName(updated.getContactName());
         existing.setEmail(updated.getEmail());
         existing.setPhone(updated.getPhone());
@@ -58,15 +68,20 @@ public class SupplierService {
     @Transactional
     public void deactivateSupplier(Long id){
         Supplier supplier = getSupplierById(id);
-        supplier.setIsActive(false);
+        supplier.setIsActive(supplier.getIsActive() == null || !supplier.getIsActive());
         supplierRepository.save(supplier);
     }
 
     @Transactional
     public void deleteSupplier(Long id){
-        if(!supplierRepository.existsById(id)){
-            throw new RuntimeException("Supplier not found with id: " + id);
+        Supplier supplier = supplierRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Supplier not found with id: " + id));
+        if (supplier.getProducts() != null) {
+            for (Product product : supplier.getProducts()) {
+                product.setSupplier(null);
+            }
+            supplier.getProducts().clear();
         }
-        supplierRepository.deleteById(id);
+        supplierRepository.delete(supplier);
     }
 }
