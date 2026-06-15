@@ -14,6 +14,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.config.Customizer;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -33,6 +37,18 @@ public class SecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
+    // set cors mac dinh *, change later?
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("*"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -44,32 +60,34 @@ public class SecurityConfig {
                         .requestMatchers("/", "/index.html", "/login.html", "/static/**", "/*.html", "/*.js", "/*.css",
                                 "/favicon.ico")
                         .permitAll()
-                        // 1. User Management (ADMIN only)
+
+                        // 1. User Management (ADMIN)
                         .requestMatchers("/api/users/**").hasRole("ADMIN")
-                        
-                        // 2. Products, Categories, Suppliers (MANAGER and STAFF can CRUD)
+
+                        // 2. Products, Categories, Suppliers (MANAGER, STAFF)
                         .requestMatchers("/api/products/**").hasAnyRole("MANAGER", "STAFF")
                         .requestMatchers("/api/categories/**").hasAnyRole("MANAGER", "STAFF")
                         .requestMatchers("/api/suppliers/**").hasAnyRole("MANAGER", "STAFF")
-                        
+
                         // 3. Stock Requests
-                        // - Approval/Rejection (MANAGER only)
-                        .requestMatchers(HttpMethod.POST, "/api/stock-requests/*/approve", "/api/stock-requests/*/reject")
+                        // - Approval/Rejection (MANAGER)
+                        .requestMatchers(HttpMethod.POST, "/api/stock-requests/*/approve",
+                                "/api/stock-requests/*/reject")
                         .hasRole("MANAGER")
-                        // - Creation (STAFF only)
+                        // - Creation (STAFF)
                         .requestMatchers(HttpMethod.POST, "/api/stock-requests").hasRole("STAFF")
-                        // - Viewing/Details/Exporting (MANAGER and STAFF)
+                        // - Viewing/Details (MANAGER, STAFF)
                         .requestMatchers("/api/stock-requests/**").hasAnyRole("MANAGER", "STAFF")
-                        
-                        // 4. Invoices (MANAGER and STAFF)
+
+                        // 4. Invoices (MANAGER, STAFF)
                         .requestMatchers("/api/invoices/**").hasAnyRole("MANAGER", "STAFF")
-                        
-                        // 4. Stock Movements (MANAGER only)
+
+                        // 5. Stock Movements (MANAGER)
                         .requestMatchers("/api/stock-movements/**").hasRole("MANAGER")
-                        
-                        // 5. Statistics/Dashboard (MANAGER only)
+
+                        // 6. Statistics/Dashboard (MANAGER)
                         .requestMatchers("/api/statistics/**").hasRole("MANAGER")
-                        
+
                         .anyRequest().authenticated());
 
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

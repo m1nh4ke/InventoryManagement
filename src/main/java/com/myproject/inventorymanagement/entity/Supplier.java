@@ -2,7 +2,9 @@ package com.myproject.inventorymanagement.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
@@ -12,36 +14,47 @@ import java.util.List;
 
 @Entity
 @Table(name = "suppliers")
-@Data
+@Getter
+@Setter
+@ToString(onlyExplicitlyIncluded = true)
 @NoArgsConstructor
 @AllArgsConstructor
 public class Supplier {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ToString.Include
     private Long id;
 
     @Column(name = "name", nullable = false, length = 150)
+    @ToString.Include
     private String name;
 
     @Column(name = "contact_name", length = 150)
+    @ToString.Include
     private String contactName;
 
     @Column(name = "email", length = 100)
+    @ToString.Include
     private String email;
 
     @Column(name = "phone", length = 20)
+    @ToString.Include
     private String phone;
 
     @Column(name = "address", columnDefinition = "TEXT")
+    @ToString.Include
     private String address;
 
     @Column(name = "is_active")
+    @ToString.Include
     private Boolean isActive = true;
 
     @Column(name = "created_at", updatable = true)
+    @ToString.Include
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
+    @ToString.Include
     private LocalDateTime updateddAt;
 
     @OneToMany(mappedBy = "supplier", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)

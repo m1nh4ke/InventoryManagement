@@ -12,7 +12,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
     <style>
-        /* ── RESET & ROOT ─────────────────────────────────────────────────────────── */
+        /* ── RESET & ROOT ── */
         *,
         *::before,
         *::after {
@@ -55,7 +55,7 @@
             cursor: pointer;
         }
 
-        /* ── SIDEBAR ──────────────────────────────────────────────────────────────── */
+        /* ── SIDEBAR ── */
         .sidebar {
             position: fixed;
             left: 0;
@@ -182,7 +182,7 @@
             color: var(--muted);
         }
 
-        /* ── MAIN ─────────────────────────────────────────────────────────────────── */
+        /* ── MAIN ── */
         .main {
             margin-left: 230px;
             min-height: 100vh;
@@ -240,7 +240,7 @@
             padding: 28px;
         }
 
-        /* ── STAT CARDS ───────────────────────────────────────────────────────────── */
+        /* ── STAT CARDS ── */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -359,7 +359,7 @@
             margin-top: 6px;
         }
 
-        /* ── SECTION ──────────────────────────────────────────────────────────────── */
+        /* ── SECTION ── */
         .section {
             background: var(--bg2);
             border: 1px solid var(--border);
@@ -394,7 +394,7 @@
             align-items: center;
         }
 
-        /* ── TOOLBAR ──────────────────────────────────────────────────────────────── */
+        /* ── TOOLBAR ── */
         .toolbar {
             display: flex;
             align-items: center;
@@ -440,7 +440,7 @@
             color: var(--muted);
         }
 
-        /* ── BUTTONS ──────────────────────────────────────────────────────────────── */
+        /* ── BUTTONS ── */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -497,7 +497,7 @@
             font-size: 12px;
         }
 
-        /* ── TABLE ────────────────────────────────────────────────────────────────── */
+        /* ── TABLE ── */
         .table-wrap {
             overflow-x: auto;
         }
@@ -551,7 +551,7 @@
             font-weight: 600;
         }
 
-        /* ── PILLS ────────────────────────────────────────────────────────────────── */
+        /* ── PILLS ── */
         .pill {
             display: inline-flex;
             align-items: center;
@@ -597,7 +597,7 @@
             color: var(--accent3);
         }
 
-        /* ── ACTION BTNS ──────────────────────────────────────────────────────────── */
+        /* ── ACTION BUTTONS ── */
         .action-cell {
             display: flex;
             gap: 6px;
@@ -636,7 +636,7 @@
             border-color: var(--accent2);
         }
 
-        /* ── MODAL ────────────────────────────────────────────────────────────────── */
+        /* ── MODAL ── */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -731,7 +731,7 @@
             border-top: 1px solid var(--border);
         }
 
-        /* ── FORM ─────────────────────────────────────────────────────────────────── */
+        /* ── FORM ── */
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -790,7 +790,7 @@
             min-height: 80px;
         }
 
-        /* ── PAGINATION ───────────────────────────────────────────────────────────── */
+        /* ── PAGINATION ── */
         .pagination {
             display: flex;
             align-items: center;
@@ -836,7 +836,7 @@
             color: var(--accent);
         }
 
-        /* ── TOAST ────────────────────────────────────────────────────────────────── */
+        /* ── TOAST ── */
         #toast-container {
             position: fixed;
             bottom: 24px;
@@ -894,7 +894,7 @@
             }
         }
 
-        /* ── LOADER ───────────────────────────────────────────────────────────────── */
+        /* ── LOADER ── */
         .loader {
             display: flex;
             align-items: center;
@@ -930,7 +930,7 @@
             display: block;
         }
 
-        /* ── TABS ─────────────────────────────────────────────────────────────────── */
+        /* ── TABS ── */
         .tabs {
             display: flex;
             gap: 0;
@@ -958,7 +958,7 @@
             border-color: var(--accent);
         }
 
-        /* ── DASHBOARD SPECIFICS ──────────────────────────────────────────────────── */
+        /* ── DASHBOARD SPECIFICS ── */
         .two-col {
             display: grid;
             grid-template-columns: 1fr 360px;
@@ -1048,7 +1048,7 @@
             margin-top: 3px;
         }
 
-        /* ── CHARTS ───────────────────────────────────────────────────────────────── */
+        /* ── CHARTS ── */
         .charts-grid {
             display: grid;
             grid-template-columns: 2fr 1fr;
@@ -1062,7 +1062,7 @@
             width: 100%;
         }
 
-        /* ── RESPONSIVE ───────────────────────────────────────────────────────────── */
+        /* ── RESPONSIVE ── */
         @media (max-width: 1100px) {
             .two-col {
                 grid-template-columns: 1fr;
@@ -1107,7 +1107,7 @@
             }
         }
 
-        /* ── IMMERSIVE FULL-SCREEN SCANNER ───────────────────────────────────────── */
+        /* ── IMMERSIVE FULL-SCREEN BARCODE SCANNER ── */
         .scanner-fullscreen {
             position: fixed;
             inset: 0;
@@ -1517,10 +1517,8 @@
 
     <!-- IMMERSIVE FULL-SCREEN BARCODE SCANNER -->
     <div class="scanner-fullscreen" id="scanner-modal">
-        <!-- Camera Viewport -->
         <div id="scanner-reader"></div>
 
-        <!-- Scrim / Dark Overlay with Centered Scan Hole -->
         <div class="scanner-scrim">
             <div class="scanner-box">
                 <div class="scanner-laser"></div>
@@ -1531,35 +1529,32 @@
             </div>
         </div>
 
-        <!-- Floating Header -->
         <div class="scanner-header-float">
             <div class="scanner-header-title">
                 <i class="fas fa-barcode"></i>
-                <span>Quét Mã Barcode / SKU Sản Phẩm</span>
+                <span>Quét Mã Barcode Sản Phẩm</span>
             </div>
             <button class="scanner-close-btn" onclick="closeBarcodeScanner()" title="Đóng máy quét">
                 <i class="fas fa-xmark"></i>
             </button>
         </div>
 
-        <!-- Floating Footer Controls -->
         <div class="scanner-footer-float">
             <div class="scanner-prompt" id="scanner-status-prompt">
                 Vui lòng đưa mã vạch của sản phẩm vào khung hình
             </div>
 
-            <!-- Mode Content Sections -->
             <div class="scanner-sub-sec active" id="scan-sec-camera"></div>
         </div>
     </div>
 
     <script>
-        // ── CONFIG ───────────────────────────────────────────────────────────────────
+        /* ── CONFIG ── */
         const API = 'http://localhost:8080/api';
         let currentPage = 'dashboard';
         let role = 'ROLE_STAFF';
 
-        // ── API HELPER ───────────────────────────────────────────────────────────────
+        /* ── API HELPER ── */
         async function api(path, method = 'GET', body = null) {
             const token = localStorage.getItem('token');
             if (!token) {
@@ -1603,7 +1598,72 @@
             window.location.href = '/login.html';
         }
 
-        // ── INITIALIZATION ───────────────────────────────────────────────────────────
+        function renderPagination(totalItems, currentPage, pageSize, onPageChangeFnName, ...args) {
+            const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
+            const startItem = totalItems === 0 ? 0 : (currentPage - 1) * pageSize + 1;
+            const endItem = Math.min(currentPage * pageSize, totalItems);
+            
+            const formatArg = arg => {
+                if (typeof arg === 'string') {
+                    return `'${arg.replace(/'/g, "\\'")}'`;
+                }
+                return arg;
+            };
+            
+            const baseArgsStr = args.map(formatArg).join(', ');
+            const getClickAction = (pageNum) => {
+                return `${onPageChangeFnName}(${baseArgsStr ? `${baseArgsStr}, ${pageNum}` : pageNum})`;
+            };
+            
+            let html = `
+                <div class="pagination">
+                    <div class="pagination-info">
+                        Hiển thị ${startItem} - ${endItem} trong tổng số ${totalItems} dòng
+                    </div>
+                    <div class="page-btns">
+            `;
+            
+            // Prev button
+            const prevDisabled = currentPage === 1;
+            html += `
+                <button class="page-btn" ${prevDisabled ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : `onclick="${getClickAction(currentPage - 1)}"`}>
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            `;
+            
+            // Page numbers
+            const maxVisiblePages = 5;
+            let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+            let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+            if (endPage - startPage + 1 < maxVisiblePages) {
+                startPage = Math.max(1, endPage - maxVisiblePages + 1);
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                const isActive = i === currentPage;
+                html += `
+                    <button class="page-btn ${isActive ? 'active' : ''}" ${isActive ? 'disabled' : `onclick="${getClickAction(i)}"`}>
+                        ${i}
+                    </button>
+                `;
+            }
+            
+            // Next button
+            const nextDisabled = currentPage === totalPages;
+            html += `
+                <button class="page-btn" ${nextDisabled ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : `onclick="${getClickAction(currentPage + 1)}"`}>
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            `;
+            
+            html += `
+                    </div>
+                </div>
+            `;
+            return html;
+        }
+
+        /* ── INITIALIZATION ── */
         (function init() {
             const token = localStorage.getItem('token');
             if (!token) {
@@ -1627,14 +1687,13 @@
             };
             document.getElementById('user-display-role').textContent = roleMap[role] || role.replace('ROLE_', '');
 
-            // Reset all sidebar nav items to visible
             const elements = ['nav-dashboard', 'nav-products', 'nav-mgmt-section', 'nav-categories', 'nav-suppliers', 'nav-requests', 'nav-invoices', 'nav-stock', 'nav-sys-section', 'nav-users'];
             elements.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.style.display = '';
             });
 
-            // Role-based UI filtering
+            /* ── UI FILTERING ── */
             if (role === 'ROLE_STAFF') {
                 document.getElementById('nav-dashboard').style.display = 'none';
                 document.getElementById('nav-stock').style.display = 'none';
@@ -1655,7 +1714,7 @@
             }
         })();
 
-        // ── TOAST ────────────────────────────────────────────────────────────────────
+        /* ── TOAST ── */
         function toast(msg, type = 'success') {
             const t = document.createElement('div');
             t.className = `toast ${type}`;
@@ -1664,7 +1723,7 @@
             setTimeout(() => t.remove(), 3500);
         }
 
-        // ── MODAL ────────────────────────────────────────────────────────────────────
+        /* ── MODAL ── */
         function openModal(title, body, footer) {
             document.getElementById('modal-title').textContent = title;
             document.getElementById('modal-body').innerHTML = body;
@@ -1674,7 +1733,7 @@
         function closeModal() { document.getElementById('modal').classList.remove('open'); }
         document.getElementById('modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
 
-        // ── NAVIGATION ───────────────────────────────────────────────────────────────
+        /* ── NAVIGATION ── */
         function showPage(page) {
             const role = localStorage.getItem('role') || 'ROLE_STAFF';
             const allowedPages = {
@@ -1706,9 +1765,7 @@
         }
         function reloadPage() { showPage(currentPage); }
 
-        // ─────────────────────────────────────────────────────────────────────────────
-        // DASHBOARD
-        // ─────────────────────────────────────────────────────────────────────────────
+        /* ── DASHBOARD ── */
         async function dashboard() {
             document.getElementById('content').innerHTML = `<div class="loader"><div class="spinner"></div></div>`;
             try {
@@ -1718,7 +1775,6 @@
                 const lowStock = products.filter(p => p.quantity <= p.minStockLevel);
                 const outOfStock = products.filter(p => p.quantity === 0);
 
-                // Update sidebar badge
                 const badge = document.getElementById('low-stock-badge');
                 if (lowStock.length > 0) { badge.textContent = lowStock.length; badge.style.display = ''; }
 
@@ -1727,7 +1783,6 @@
                 const pendingRequests = requests.filter(r => r.status === 'PENDING').length;
                 const approvedRequests = requests.filter(r => r.status === 'APPROVED').length;
 
-                // Compute Category Distribution (by quantity)
                 const catQtyMap = {};
                 products.forEach(p => {
                     const catName = p.category?.name || 'Chưa phân loại';
@@ -1737,7 +1792,7 @@
                 const catQtyLabels = Object.keys(catQtyMap);
                 const catQtyData = Object.values(catQtyMap);
 
-                // Compute Stock Movement Trends (last 30 days)
+                /* ── STOCK MOVEMENT TRENDS (last 30 days) ── */
                 const last30Days = [...Array(30)].map((_, i) => {
                     const d = new Date();
                     d.setDate(d.getDate() - (29 - i));
@@ -1909,10 +1964,8 @@
             }
         }
 
-        // ─────────────────────────────────────────────────────────────────────────────
-        // PRODUCTS
-        // ─────────────────────────────────────────────────────────────────────────────
-        async function products(filter = 'all', keyword = '') {
+        /* ── PRODUCTS ── */
+        async function products(filter = 'all', keyword = '', page = 1) {
             document.getElementById('content').innerHTML = `<div class="loader"><div class="spinner"></div></div>`;
             try {
                 const [data, cats, sups] = await Promise.all([
@@ -1926,6 +1979,13 @@
                     p.sku.toLowerCase().includes(keyword.toLowerCase()));
 
                 const canModify = (role === 'ROLE_MANAGER' || role === 'ROLE_STAFF');
+                
+                const pageSize = 20;
+                const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+                const currentPageNum = Math.min(page, totalPages);
+                const startIdx = (currentPageNum - 1) * pageSize;
+                const pagedItems = filtered.slice(startIdx, startIdx + pageSize);
+
                 document.getElementById('content').innerHTML = `
       <div class="section">
         <div class="section-header">
@@ -1960,8 +2020,8 @@
               <th>Số lượng</th><th>Trạng thái</th><th>Hành động</th>
             </tr></thead>
             <tbody>
-              ${filtered.length === 0 ? `<tr><td colspan="7"><div class="empty-state"><i class="fas fa-box-open"></i>Không tìm thấy sản phẩm nào</div></td></tr>` :
-                        filtered.map(p => {
+              ${pagedItems.length === 0 ? `<tr><td colspan="7"><div class="empty-state"><i class="fas fa-box-open"></i>Không tìm thấy sản phẩm nào</div></td></tr>` :
+                        pagedItems.map(p => {
                             const status = p.quantity === 0 ? 'out' : p.quantity <= p.minStockLevel ? 'low' : 'active';
                             const statusLabel = p.quantity === 0 ? 'Hết hàng' : p.quantity <= p.minStockLevel ? 'Sắp hết hàng' : 'Còn hàng';
                             return `<tr>
@@ -1982,10 +2042,10 @@
             </tbody>
           </table>
         </div>
+        ${renderPagination(filtered.length, currentPageNum, pageSize, 'products', filter, keyword)}
       </div>`;
             } catch (e) { showError(e.message); }
         }
-
         function openProductModal(product, cats, suppliers) {
             const isEdit = !!product;
             openModal(isEdit ? 'Sửa sản phẩm' : 'Thêm sản phẩm mới', `
@@ -2017,6 +2077,17 @@
         }
 
         async function saveProduct(id) {
+            const skuVal = document.getElementById('f-sku').value.trim();
+            const nameVal = document.getElementById('f-name').value.trim();
+            if (!skuVal) {
+                toast('Mã SKU không được để trống', 'error');
+                return;
+            }
+            if (!nameVal) {
+                toast('Tên sản phẩm không được để trống', 'error');
+                return;
+            }
+
             const minVal = parseInt(document.getElementById('f-min').value);
             const maxVal = parseInt(document.getElementById('f-max').value);
             if (isNaN(minVal) || minVal < 0) {
@@ -2029,8 +2100,8 @@
             }
 
             const body = {
-                sku: document.getElementById('f-sku').value,
-                name: document.getElementById('f-name').value,
+                sku: skuVal,
+                name: nameVal,
                 description: document.getElementById('f-desc').value,
                 quantity: 0,
                 minStockLevel: minVal,
@@ -2092,16 +2163,21 @@
             } catch (e) { toast(e.message, 'error'); }
         }
 
-        // ─────────────────────────────────────────────────────────────────────────────
-        // CATEGORIES
-        // ─────────────────────────────────────────────────────────────────────────────
-        async function categories(keyword = '') {
+        /* ── CATEGORIES ── */
+        async function categories(keyword = '', page = 1) {
             document.getElementById('content').innerHTML = `<div class="loader"><div class="spinner"></div></div>`;
             try {
                 const data = await api('/categories');
                 let filtered = data;
                 if (keyword) filtered = filtered.filter(c => c.name.toLowerCase().includes(keyword.toLowerCase()));
                 const canModify = (role === 'ROLE_MANAGER' || role === 'ROLE_STAFF');
+
+                const pageSize = 20;
+                const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+                const currentPageNum = Math.min(page, totalPages);
+                const startIdx = (currentPageNum - 1) * pageSize;
+                const pagedItems = filtered.slice(startIdx, startIdx + pageSize);
+
                 document.getElementById('content').innerHTML = `
       <div class="section">
         <div class="section-header">
@@ -2121,8 +2197,8 @@
         <div class="table-wrap"><table>
           <thead><tr><th>#</th><th>Tên danh mục</th><th>Mô tả</th><th>Ngày tạo</th><th>Hành động</th></tr></thead>
           <tbody>
-            ${filtered.length === 0 ? `<tr><td colspan="5"><div class="empty-state"><i class="fas fa-tags"></i>Không tìm thấy danh mục nào</div></td></tr>` :
-                        filtered.map(c => `<tr>
+            ${pagedItems.length === 0 ? `<tr><td colspan="5"><div class="empty-state"><i class="fas fa-tags"></i>Không tìm thấy danh mục nào</div></td></tr>` :
+                        pagedItems.map(c => `<tr>
                 <td class="mono">${c.id}</td>
                 <td class="fw600">${c.name}</td>
                 <td style="color:var(--muted)">${c.description || '—'}</td>
@@ -2136,10 +2212,10 @@
               </tr>`).join('')}
           </tbody>
         </table></div>
+        ${renderPagination(filtered.length, currentPageNum, pageSize, 'categories', keyword)}
       </div>`;
             } catch (e) { showError(e.message); }
         }
-
         function openCategoryModal(cat) {
             openModal(cat ? 'Sửa danh mục' : 'Thêm danh mục', `
     <div class="form-grid full">
@@ -2152,7 +2228,12 @@
         }
 
         async function saveCategory(id) {
-            const body = { name: document.getElementById('c-name').value, description: document.getElementById('c-desc').value };
+            const nameVal = document.getElementById('c-name').value.trim();
+            if (!nameVal) {
+                toast('Tên danh mục không được để trống', 'error');
+                return;
+            }
+            const body = { name: nameVal, description: document.getElementById('c-desc').value };
             try {
                 if (id) await api(`/categories/${id}`, 'PUT', body);
                 else await api('/categories', 'POST', body);
@@ -2167,16 +2248,21 @@
             catch (e) { toast(e.message, 'error'); }
         }
 
-        // ─────────────────────────────────────────────────────────────────────────────
-        // SUPPLIERS
-        // ─────────────────────────────────────────────────────────────────────────────
-        async function suppliers(keyword = '') {
+        /* ── SUPPLIERS ── */
+        async function suppliers(keyword = '', page = 1) {
             document.getElementById('content').innerHTML = `<div class="loader"><div class="spinner"></div></div>`;
             try {
                 const data = await api('/suppliers');
                 let filtered = data;
                 if (keyword) filtered = filtered.filter(s => s.name.toLowerCase().includes(keyword.toLowerCase()));
                 const canModify = (role === 'ROLE_MANAGER' || role === 'ROLE_STAFF');
+
+                const pageSize = 20;
+                const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+                const currentPageNum = Math.min(page, totalPages);
+                const startIdx = (currentPageNum - 1) * pageSize;
+                const pagedItems = filtered.slice(startIdx, startIdx + pageSize);
+
                 document.getElementById('content').innerHTML = `
       <div class="section">
         <div class="section-header">
@@ -2196,8 +2282,8 @@
         <div class="table-wrap"><table>
           <thead><tr><th>#</th><th>Tên công ty</th><th>Người liên hệ</th><th>Email</th><th>Số điện thoại</th><th>Trạng thái</th><th>Hành động</th></tr></thead>
           <tbody>
-            ${filtered.length === 0 ? `<tr><td colspan="7"><div class="empty-state"><i class="fas fa-truck"></i>Không tìm thấy nhà cung cấp nào</div></td></tr>` :
-                        filtered.map(s => `<tr>
+            ${pagedItems.length === 0 ? `<tr><td colspan="7"><div class="empty-state"><i class="fas fa-truck"></i>Không tìm thấy nhà cung cấp nào</div></td></tr>` :
+                        pagedItems.map(s => `<tr>
                 <td class="mono">${s.id}</td>
                 <td class="fw600">${s.name}</td>
                 <td>${s.contactName || '—'}</td>
@@ -2214,10 +2300,10 @@
               </tr>`).join('')}
           </tbody>
         </table></div>
+        ${renderPagination(filtered.length, currentPageNum, pageSize, 'suppliers', keyword)}
       </div>`;
             } catch (e) { showError(e.message); }
         }
-
         function openSupplierModal(sup) {
             openModal(sup ? 'Sửa thông tin nhà cung cấp' : 'Thêm nhà cung cấp mới', `
     <div class="form-grid">
@@ -2233,8 +2319,13 @@
         }
 
         async function saveSupplier(id) {
+            const nameVal = document.getElementById('s-name').value.trim();
+            if (!nameVal) {
+                toast('Tên nhà cung cấp không được để trống', 'error');
+                return;
+            }
             const body = {
-                name: document.getElementById('s-name').value,
+                name: nameVal,
                 contactName: document.getElementById('s-contact').value,
                 email: document.getElementById('s-email').value,
                 phone: document.getElementById('s-phone').value,
@@ -2265,10 +2356,8 @@
             catch (e) { toast(e.message, 'error'); }
         }
 
-        // ─────────────────────────────────────────────────────────────────────────────
-        // STOCK MOVEMENTS
-        // ─────────────────────────────────────────────────────────────────────────────
-        async function stock(typeFilter = 'ALL', keyword = '') {
+        /* ── STOCK MOVEMENTS ── */
+        async function stock(typeFilter = 'ALL', keyword = '', page = 1) {
             document.getElementById('content').innerHTML = `<div class="loader"><div class="spinner"></div></div>`;
             try {
                 const data = await api('/stock-movements');
@@ -2290,6 +2379,12 @@
                     ALL: 'Tất cả', IN: 'Nhập kho', OUT: 'Xuất kho',
                     ADJUSTMENT: 'Điều chỉnh', RETURN: 'Trả lại'
                 };
+
+                const pageSize = 20;
+                const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+                const currentPageNum = Math.min(page, totalPages);
+                const startIdx = (currentPageNum - 1) * pageSize;
+                const pagedItems = filtered.slice(startIdx, startIdx + pageSize);
 
                 document.getElementById('content').innerHTML = `
       <div class="section">
@@ -2314,8 +2409,8 @@
         <div class="table-wrap"><table>
           <thead><tr><th>#</th><th>Sản phẩm</th><th>Loại</th><th>Số lượng</th><th>Lý do</th><th>Thực hiện bởi</th><th>Ngày thực hiện</th></tr></thead>
           <tbody>
-            ${filtered.length === 0 ? `<tr><td colspan="7"><div class="empty-state"><i class="fas fa-inbox"></i>Không tìm thấy biến động nào</div></td></tr>` :
-                        filtered.map(m => {
+            ${pagedItems.length === 0 ? `<tr><td colspan="7"><div class="empty-state"><i class="fas fa-inbox"></i>Không tìm thấy biến động nào</div></td></tr>` :
+                        pagedItems.map(m => {
                             const typeText = m.type === 'IN' ? 'Nhập kho' : m.type === 'OUT' ? 'Xuất kho' : m.type === 'RETURN' ? 'Trả lại' : 'Điều chỉnh';
                             return `<tr>
                 <td class="mono">${m.id}</td>
@@ -2329,10 +2424,10 @@
                         }).join('')}
           </tbody>
         </table></div>
+        ${renderPagination(filtered.length, currentPageNum, pageSize, 'stock', typeFilter, keyword)}
       </div>`;
             } catch (e) { showError(e.message); }
         }
-
         async function openGeneralStockModal() {
             try {
                 const products = await api('/products');
@@ -2352,10 +2447,10 @@
           </div>
           <div class="form-group"><label>Loại biến động</label>
             <select id="sm-gen-type">
-              <option value="in">Nhập kho (IN)</option>
-              <option value="out">Xuất kho (OUT)</option>
-              <option value="adjust">Điều chỉnh (ADJUSTMENT)</option>
-              <option value="return">Trả lại (RETURN)</option>
+              <option value="in">Nhập kho</option>
+              <option value="out">Xuất kho</option>
+              <option value="adjust">Điều chỉnh</option>
+              <option value="return">Trả lại</option>
             </select>
           </div>
           <div class="form-group"><label>Số lượng</label><input id="sm-gen-qty" type="number" min="1" value="1"/></div>
@@ -2390,9 +2485,7 @@
             } catch (e) { toast(e.message, 'error'); }
         }
 
-        // ─────────────────────────────────────────────────────────────────────────────
-        // USERS
-        // ─────────────────────────────────────────────────────────────────────────────
+        /* ── USERS ── */
         async function users(keyword = '') {
             document.getElementById('content').innerHTML = `<div class="loader"><div class="spinner"></div></div>`;
             try {
@@ -2475,7 +2568,7 @@
             try {
                 if (id) await api(`/users/${id}`, 'PUT', body);
                 else await api('/users', 'POST', body);
-                toast(id ? 'User updated!' : 'User created!');
+                toast(id ? 'Cập nhật thông tin thành công!' : 'Tạo tài khoản thành công!');
                 closeModal(); users();
             } catch (e) { toast(e.message, 'error'); }
         }
@@ -2497,10 +2590,8 @@
             catch (e) { toast(e.message, 'error'); }
         }
 
-        // ─────────────────────────────────────────────────────────────────────────────
-        // STOCK REQUESTS
-        // ─────────────────────────────────────────────────────────────────────────────
-        async function requests(statusFilter = 'ALL', keyword = '') {
+        /* ── STOCK REQUESTS ── */
+        async function requests(statusFilter = 'ALL', keyword = '', page = 1) {
             document.getElementById('content').innerHTML = `<div class="loader"><div class="spinner"></div></div>`;
             try {
                 const role = localStorage.getItem('role') || 'ROLE_STAFF';
@@ -2521,6 +2612,12 @@
                     APPROVED: data.filter(r => r.status === 'APPROVED').length,
                     REJECTED: data.filter(r => r.status === 'REJECTED').length
                 };
+
+                const pageSize = 20;
+                const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+                const currentPageNum = Math.min(page, totalPages);
+                const startIdx = (currentPageNum - 1) * pageSize;
+                const pagedItems = filtered.slice(startIdx, startIdx + pageSize);
 
                 document.getElementById('content').innerHTML = `
       <div class="section">
@@ -2559,8 +2656,8 @@
             </tr>
           </thead>
           <tbody>
-            ${filtered.length === 0 ? `<tr><td colspan="8"><div class="empty-state"><i class="fas fa-inbox"></i>Không tìm thấy yêu cầu nào</div></td></tr>` :
-                        filtered.map(r => {
+            ${pagedItems.length === 0 ? `<tr><td colspan="8"><div class="empty-state"><i class="fas fa-inbox"></i>Không tìm thấy yêu cầu nào</div></td></tr>` :
+                        pagedItems.map(r => {
                             const statusClass = r.status === 'PENDING' ? 'pill-low' : r.status === 'APPROVED' ? 'pill-active' : 'pill-out';
                             const typeText = r.type === 'IMPORT' ? 'Nhập kho' : 'Xuất kho';
                             const typeClass = r.type === 'IMPORT' ? 'pill-in' : 'pill-return';
@@ -2593,14 +2690,12 @@
                         }).join('')}
           </tbody>
         </table></div>
+        ${renderPagination(filtered.length, currentPageNum, pageSize, 'requests', statusFilter, keyword)}
       </div>`;
             } catch (e) { showError(e.message); }
         }
-
-        // ─────────────────────────────────────────────────────────────────────────────
-        // INVOICES
-        // ─────────────────────────────────────────────────────────────────────────────
-        async function invoices(keyword = '') {
+        /* ── INVOICES ── */
+        async function invoices(keyword = '', page = 1) {
             document.getElementById('content').innerHTML = `<div class="loader"><div class="spinner"></div></div>`;
             try {
                 const data = await api('/invoices');
@@ -2612,6 +2707,13 @@
                         (inv.request && inv.request.id.toString() === keyword)
                     );
                 }
+
+                const pageSize = 20;
+                const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+                const currentPageNum = Math.min(page, totalPages);
+                const startIdx = (currentPageNum - 1) * pageSize;
+                const pagedItems = filtered.slice(startIdx, startIdx + pageSize);
+
                 document.getElementById('content').innerHTML = `
       <div class="section">
         <div class="section-header">
@@ -2640,8 +2742,8 @@
             </tr>
           </thead>
           <tbody>
-            ${filtered.length === 0 ? `<tr><td colspan="7"><div class="empty-state"><i class="fas fa-file-invoice"></i>Không tìm thấy hóa đơn nào</div></td></tr>` :
-                        filtered.map(inv => {
+            ${pagedItems.length === 0 ? `<tr><td colspan="7"><div class="empty-state"><i class="fas fa-file-invoice"></i>Không tìm thấy hóa đơn nào</div></td></tr>` :
+                        pagedItems.map(inv => {
                             const typeText = inv.type === 'IMPORT' ? 'Nhập kho' : 'Xuất kho';
                             const typeClass = inv.type === 'IMPORT' ? 'pill-in' : 'pill-return';
                             return `<tr>
@@ -2660,10 +2762,10 @@
                         }).join('')}
           </tbody>
         </table></div>
+        ${renderPagination(filtered.length, currentPageNum, pageSize, 'invoices', keyword)}
       </div>`;
             } catch (e) { showError(e.message); }
         }
-
         async function viewInvoiceDetails(id) {
             try {
                 const inv = await api(`/invoices/${id}`);
@@ -2759,10 +2861,8 @@
 
                 openModal('Tạo yêu cầu Nhập/Xuất', bodyHtml, footerHtml);
 
-                // Add first row automatically
                 addRequestItemRow(productId);
 
-                // Auto focus quick SKU input after modal opens
                 setTimeout(() => {
                     const qInput = document.getElementById('req-quick-sku');
                     if (qInput) qInput.focus();
@@ -2939,9 +3039,7 @@
             }
         }
 
-        // ─────────────────────────────────────────────────────────────────────────────
-        // BARCODE SCANNER
-        // ─────────────────────────────────────────────────────────────────────────────
+        /* ── BARCODE SCANNER ── */
         let html5QrcodeScanner = null;
         let scannerTarget = 'request';
 
@@ -2955,11 +3053,11 @@
                 gainNode.connect(context.destination);
 
                 oscillator.type = 'sine';
-                oscillator.frequency.setValueAtTime(880, context.currentTime); // 880Hz beep
-                gainNode.gain.setValueAtTime(0.08, context.currentTime); // Soft volume
+                oscillator.frequency.setValueAtTime(880, context.currentTime);
+                gainNode.gain.setValueAtTime(0.08, context.currentTime);
 
                 oscillator.start();
-                oscillator.stop(context.currentTime + 0.12); // Short beep duration (120ms)
+                oscillator.stop(context.currentTime + 0.12);
             } catch (e) {
                 console.warn("Could not play beep sound:", e);
             }
@@ -3001,13 +3099,11 @@
             const config = {
                 fps: 15,
                 qrbox: (width, height) => {
-                    // Immersive scanning square inside full view. Leave 60px margins.
                     const size = Math.min(width, height) - 60;
                     return { width: Math.max(160, size), height: Math.max(160, size) };
                 }
             };
 
-            // Try environment camera first (rear camera), fallback to user camera (front camera)
             html5QrcodeScanner.start(
                 { facingMode: "environment" },
                 config,
@@ -3015,11 +3111,10 @@
                     handleBarcodeScanned(decodedText);
                 },
                 (errorMessage) => {
-                    // Ignore scanner search noise
                 }
             ).catch(err => {
-                console.warn("Failed starting environment camera, trying user camera:", err);
-                // Fallback to user facing camera (front camera)
+                console.warn("Không thể bật camera! Thử dùng camera khác:", err);
+
                 html5QrcodeScanner.start(
                     { facingMode: "user" },
                     config,
@@ -3027,10 +3122,9 @@
                         handleBarcodeScanned(decodedText);
                     },
                     (errorMessage) => {
-                        // Ignore noise
                     }
                 ).catch(err2 => {
-                    console.error("Camera scan start error:", err2);
+                    console.error("Lỗi khởi động camera:", err2);
                     toast("Không mở được camera: " + err2.message, "error");
                 });
             });
@@ -3039,14 +3133,14 @@
         function stopCameraScan() {
             if (html5QrcodeScanner) {
                 const scannerRef = html5QrcodeScanner;
-                html5QrcodeScanner = null; // Prevent double calls
+                html5QrcodeScanner = null;
 
                 scannerRef.stop().then(() => {
                     forceStopCameraTracks();
                     const container = document.getElementById('scanner-reader');
                     if (container) container.innerHTML = '';
                 }).catch(err => {
-                    console.error("Failed to stop camera scanner:", err);
+                    console.error("Tắt camera thất bại:", err);
                     forceStopCameraTracks();
                     const container = document.getElementById('scanner-reader');
                     if (container) container.innerHTML = '';
@@ -3058,7 +3152,6 @@
 
         function forceStopCameraTracks() {
             try {
-                // Find all active video streams and stop their tracks to ensure camera light turns off
                 const videos = document.querySelectorAll('video');
                 videos.forEach(video => {
                     if (video.srcObject) {
@@ -3087,7 +3180,6 @@
                             searchInput.value = barcode;
                             products('all', barcode);
                         } else {
-                            // Switch to products page, then search
                             showPage('products');
                             setTimeout(() => {
                                 const input = document.getElementById('prod-search');
@@ -3102,7 +3194,6 @@
                             toast(`Đã chọn: ${product.name}`, 'success');
                         }
                     } else {
-                        // Default 'request' target
                         const reqList = document.getElementById('req-items-list');
                         if (reqList) {
                             addRequestItemRow(product.id);
@@ -3119,9 +3210,7 @@
             }
         }
 
-        // ─────────────────────────────────────────────────────────────────────────────
-        // UTILS
-        // ─────────────────────────────────────────────────────────────────────────────
+        /* ── UTILS ── */
         function showError(msg) {
             document.getElementById('content').innerHTML = `
     <div class="empty-state">
@@ -3131,7 +3220,7 @@
     </div>`;
         }
 
-        // Toggle sidebar layout (desktop collapses, mobile slides overlay)
+        /* ── Toggle sidebar layout ── */
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const main = document.querySelector('.main');
@@ -3143,7 +3232,7 @@
             }
         }
 
-        // ── INIT ─────────────────────────────────────────────────────────────────────
+        /* ── INIT ── */
         if (localStorage.getItem('token')) {
             const role = localStorage.getItem('role');
             if (role === 'ROLE_ADMIN') {

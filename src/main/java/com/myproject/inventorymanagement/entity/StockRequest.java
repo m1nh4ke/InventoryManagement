@@ -2,7 +2,9 @@ package com.myproject.inventorymanagement.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import java.time.LocalDateTime;
@@ -11,7 +13,9 @@ import java.util.List;
 
 @Entity
 @Table(name = "stock_requests")
-@Data
+@Getter
+@Setter
+@ToString(onlyExplicitlyIncluded = true)
 @NoArgsConstructor
 @AllArgsConstructor
 public class StockRequest {
@@ -28,14 +32,17 @@ public class StockRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ToString.Include
     private Long id;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false, length = 20)
+    @ToString.Include
     private RequestType type;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
+    @ToString.Include
     private RequestStatus status = RequestStatus.PENDING;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -49,6 +56,7 @@ public class StockRequest {
     private User manager;
 
     @Column(name = "reason", length = 255)
+    @ToString.Include
     private String reason;
 
     @OneToMany(mappedBy = "request", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
@@ -56,9 +64,11 @@ public class StockRequest {
     private List<StockRequestItem> items = new ArrayList<>();
 
     @Column(name = "created_at", updatable = false)
+    @ToString.Include
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
+    @ToString.Include
     private LocalDateTime updatedAt;
 
     @PrePersist

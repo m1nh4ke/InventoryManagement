@@ -11,57 +11,54 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public ResponseEntity<List<User>> getAll(){
+    public ResponseEntity<List<User>> getAll() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @GetMapping("/active")
-    public ResponseEntity<List<User>> getActive(){
+    public ResponseEntity<List<User>> getActive() {
         return ResponseEntity.ok(userService.getActiveUsers());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getById(@PathVariable Long id){
+    public ResponseEntity<User> getById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
     @GetMapping("/role/{role}")
-    public ResponseEntity<List<User>> getByRole(@PathVariable User.Role role){
+    public ResponseEntity<List<User>> getByRole(@PathVariable User.Role role) {
         return ResponseEntity.ok(userService.getUsersByRole(role));
     }
 
     @PostMapping
-    public ResponseEntity<User> create(@RequestBody User user){
+    public ResponseEntity<User> create(@RequestBody User user) {
         return ResponseEntity.status(201).body(userService.createUser(user));
     }
 
-
-
     @PutMapping("/{id}")
-    public ResponseEntity<User> update(@PathVariable Long id, @RequestBody User user){
+    public ResponseEntity<User> update(@PathVariable Long id, @RequestBody User user) {
         return ResponseEntity.ok(userService.updateUser(id, user));
     }
 
     @PatchMapping("/{id}/password")
-    public ResponseEntity<Void> changePassword(@PathVariable Long id, @RequestBody Map<String, String> body){
+    public ResponseEntity<Void> changePassword(@PathVariable Long id, @RequestBody Map<String, String> body) {
         userService.changePassword(id, body.get("password"));
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{id}/deactivate")
-    public ResponseEntity<Void> deactivate(@PathVariable Long id){
+    public ResponseEntity<Void> deactivate(@PathVariable Long id) {
         userService.deactivateUser(id);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id){
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         userService.deleteUser(id);
-        return  ResponseEntity.noContent().build();
+        return ResponseEntity.noContent().build();
     }
 }

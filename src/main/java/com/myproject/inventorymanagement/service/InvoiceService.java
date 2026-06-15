@@ -9,11 +9,7 @@ import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
-import com.myproject.inventorymanagement.entity.*;
-import com.myproject.inventorymanagement.repository.InvoiceItemRepository;
-import com.myproject.inventorymanagement.repository.InvoiceRepository;
-import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
+
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -24,8 +20,13 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.stereotype.Service;
 
+import com.myproject.inventorymanagement.entity.*;
+import com.myproject.inventorymanagement.repository.InvoiceItemRepository;
+import com.myproject.inventorymanagement.repository.InvoiceRepository;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
@@ -52,7 +53,8 @@ public class InvoiceService {
         Invoice invoice = new Invoice();
         invoice.setInvoiceNo("INV-" + String.format("%05d", request.getId()) + "-" + System.currentTimeMillis() / 1000);
         invoice.setRequest(request);
-        invoice.setType(request.getType() == StockRequest.RequestType.IMPORT ? Invoice.Type.IMPORT : Invoice.Type.EXPORT);
+        invoice.setType(
+                request.getType() == StockRequest.RequestType.IMPORT ? Invoice.Type.IMPORT : Invoice.Type.EXPORT);
         invoice.setUser(manager);
 
         Invoice savedInvoice = invoiceRepository.save(invoice);
@@ -76,7 +78,7 @@ public class InvoiceService {
         try (Workbook workbook = new XSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("Hóa đơn");
 
-            // Fonts & Styles
+            // Styles
             org.apache.poi.ss.usermodel.Font titleFont = workbook.createFont();
             titleFont.setBold(true);
             titleFont.setFontHeightInPoints((short) 16);
@@ -106,14 +108,14 @@ public class InvoiceService {
             centerStyle.cloneStyleFrom(borderStyle);
             centerStyle.setAlignment(HorizontalAlignment.CENTER);
 
-            // Row 0: Title
+            // Title
             Row titleRow = sheet.createRow(0);
             Cell titleCell = titleRow.createCell(0);
             titleCell.setCellValue("HÓA ĐƠN " + (invoice.getType() == Invoice.Type.IMPORT ? "NHẬP HÀNG" : "XUẤT HÀNG"));
             titleCell.setCellStyle(titleStyle);
             sheet.addMergedRegion(new org.apache.poi.ss.util.CellRangeAddress(0, 0, 0, 3));
 
-            // Info rows
+            // Info
             int r = 2;
             Row row = sheet.createRow(r++);
             row.createCell(0).setCellValue("Số hóa đơn:");
@@ -125,7 +127,8 @@ public class InvoiceService {
 
             row = sheet.createRow(r++);
             row.createCell(0).setCellValue("Loại hóa đơn:");
-            row.createCell(1).setCellValue(invoice.getType() == Invoice.Type.IMPORT ? "Nhập kho (IMPORT)" : "Xuất kho (EXPORT)");
+            row.createCell(1)
+                    .setCellValue(invoice.getType() == Invoice.Type.IMPORT ? "Nhập kho (IMPORT)" : "Xuất kho (EXPORT)");
 
             row = sheet.createRow(r++);
             row.createCell(0).setCellValue("Người thực hiện:");
@@ -133,13 +136,14 @@ public class InvoiceService {
 
             row = sheet.createRow(r++);
             row.createCell(0).setCellValue("Ngày lập:");
-            row.createCell(1).setCellValue(invoice.getCreatedAt().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
+            row.createCell(1)
+                    .setCellValue(invoice.getCreatedAt().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
 
-            r++; // Blank row
+            r++;
 
             // Headers
             Row headerRow = sheet.createRow(r++);
-            String[] columns = {"STT", "Mã SKU", "Tên sản phẩm", "Số lượng"};
+            String[] columns = { "STT", "Mã SKU", "Tên sản phẩm", "Số lượng" };
             for (int i = 0; i < columns.length; i++) {
                 Cell cell = headerRow.createCell(i);
                 cell.setCellValue(columns[i]);
@@ -168,7 +172,6 @@ public class InvoiceService {
                 c4.setCellStyle(centerStyle);
             }
 
-            // Auto-size
             for (int i = 0; i < columns.length; i++) {
                 sheet.autoSizeColumn(i);
             }
@@ -203,7 +206,6 @@ public class InvoiceService {
                         break;
                     }
                 } catch (Exception e) {
-                    // ignore
                 }
             }
             if (bf == null) {
@@ -215,26 +217,34 @@ public class InvoiceService {
             Font normalFont = new Font(bf, 11, Font.NORMAL);
 
             // Title
-            Paragraph title = new Paragraph("HÓA ĐƠN " + (invoice.getType() == Invoice.Type.IMPORT ? "NHẬP HÀNG" : "XUẤT HÀNG"), titleFont);
+            Paragraph title = new Paragraph(
+                    "HÓA ĐƠN " + (invoice.getType() == Invoice.Type.IMPORT ? "NHẬP HÀNG" : "XUẤT HÀNG"), titleFont);
             title.setAlignment(Element.ALIGN_CENTER);
             title.setSpacingAfter(20);
             document.add(title);
 
-            // Metadata info
+            // Info
             document.add(new Paragraph("Số hóa đơn: " + invoice.getInvoiceNo(), normalFont));
             document.add(new Paragraph("Mã yêu cầu kho: " + invoice.getRequest().getId(), normalFont));
-            document.add(new Paragraph("Loại hóa đơn: " + (invoice.getType() == Invoice.Type.IMPORT ? "Nhập kho (IMPORT)" : "Xuất kho (EXPORT)"), normalFont));
-            document.add(new Paragraph("Người thực hiện: " + (invoice.getUser() != null ? invoice.getUser().getUsername() : "Hệ thống"), normalFont));
-            document.add(new Paragraph("Ngày lập: " + invoice.getCreatedAt().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")), normalFont));
+            document.add(new Paragraph(
+                    "Loại hóa đơn: "
+                            + (invoice.getType() == Invoice.Type.IMPORT ? "Nhập kho (IMPORT)" : "Xuất kho (EXPORT)"),
+                    normalFont));
+            document.add(new Paragraph(
+                    "Người thực hiện: " + (invoice.getUser() != null ? invoice.getUser().getUsername() : "Hệ thống"),
+                    normalFont));
+            document.add(new Paragraph(
+                    "Ngày lập: " + invoice.getCreatedAt().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")),
+                    normalFont));
 
             Paragraph spacing = new Paragraph(" ");
             spacing.setSpacingAfter(15);
             document.add(spacing);
 
-            // Table of items
+            // Items
             PdfPTable table = new PdfPTable(4);
             table.setWidthPercentage(100);
-            table.setWidths(new float[]{1f, 2f, 5f, 2f});
+            table.setWidths(new float[] { 1f, 2f, 5f, 2f });
 
             // Headers
             PdfPCell cell1 = new PdfPCell(new Paragraph("STT", boldFont));

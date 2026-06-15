@@ -5,7 +5,6 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
-
 import java.security.Key;
 import java.util.Date;
 
@@ -46,7 +45,6 @@ public class JwtTokenProvider {
             Jwts.parserBuilder().setSigningKey(jwtSecretKey).build().parseClaimsJws(authToken);
             return true;
         } catch (JwtException | IllegalArgumentException ex) {
-            // Invalid JWT signature, expired, unsupported, or empty claims
         }
         return false;
     }

@@ -5,7 +5,7 @@ import java.util.List;
 
 @Data
 public class CreateStockRequestDto {
-    private String type; // "IMPORT" or "EXPORT"
+    private String type;
     private String reason;
     private List<ItemDto> items;
 

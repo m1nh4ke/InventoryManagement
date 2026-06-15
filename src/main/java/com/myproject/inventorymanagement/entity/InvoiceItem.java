@@ -2,19 +2,24 @@ package com.myproject.inventorymanagement.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
 @Entity
 @Table(name = "invoice_items")
-@Data
+@Getter
+@Setter
+@ToString(onlyExplicitlyIncluded = true)
 @NoArgsConstructor
 @AllArgsConstructor
 public class InvoiceItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ToString.Include
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -28,5 +33,6 @@ public class InvoiceItem {
     private Product product;
 
     @Column(name = "quantity", nullable = false)
+    @ToString.Include
     private Integer quantity;
 }

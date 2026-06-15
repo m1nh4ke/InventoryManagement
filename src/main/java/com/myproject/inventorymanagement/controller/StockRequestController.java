@@ -4,19 +4,14 @@ import com.myproject.inventorymanagement.dto.CreateStockRequestDto;
 import com.myproject.inventorymanagement.entity.StockRequest;
 import com.myproject.inventorymanagement.service.StockRequestService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/stock-requests")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class StockRequestController {
 
     private final StockRequestService stockRequestService;

@@ -6,13 +6,13 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>4.0.3</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath/> 
 	</parent>
 	<groupId>com.myproject</groupId>
 	<artifactId>inventorymanagement</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>inventorymanagement</name>
-	<description>Demo project for Spring Boot</description>
+	<description>He thong quan ly kho hang WMSVN</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -87,15 +87,11 @@
 			<artifactId>spring-boot-starter-webmvc-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-
-		<!-- Apache POI for Excel generation -->
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
 			<version>5.2.5</version>
 		</dependency>
-
-		<!-- OpenPDF for PDF generation -->
 		<dependency>
 			<groupId>com.github.librepdf</groupId>
 			<artifactId>openpdf</artifactId>

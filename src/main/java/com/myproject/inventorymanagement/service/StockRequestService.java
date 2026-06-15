@@ -1,14 +1,5 @@
 package com.myproject.inventorymanagement.service;
 
-import com.lowagie.text.Document;
-import com.lowagie.text.Element;
-import com.lowagie.text.Font;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.pdf.BaseFont;
-import com.lowagie.text.pdf.PdfPCell;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfWriter;
 import com.myproject.inventorymanagement.dto.CreateStockRequestDto;
 import com.myproject.inventorymanagement.entity.Product;
 import com.myproject.inventorymanagement.entity.StockMovement;
@@ -22,22 +13,9 @@ import com.myproject.inventorymanagement.repository.StockRequestRepository;
 import com.myproject.inventorymanagement.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.FillPatternType;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -83,15 +61,15 @@ public class StockRequestService {
             for (CreateStockRequestDto.ItemDto itemDto : dto.getItems()) {
                 Product product = productRepository.findById(itemDto.getProductId())
                         .orElseThrow(() -> new RuntimeException(
-                                "Không tìm thấy sản phẩm với id: " + itemDto.getProductId()));
+                                "Product not found with id: " + itemDto.getProductId()));
 
                 if (itemDto.getQuantity() <= 0) {
-                    throw new RuntimeException("Số lượng phải lớn hơn 0!");
+                    throw new RuntimeException("Quantity must be greater than 0!");
                 }
 
                 if (request.getType() == StockRequest.RequestType.EXPORT
                         && product.getQuantity() < itemDto.getQuantity()) {
-                    throw new RuntimeException("Trong kho không đủ sản phẩm: " + product.getName() + ". Còn tồn: "
+                    throw new RuntimeException("Không đủ số lượng trong kho: " + product.getName() + ". Số lượng: "
                             + product.getQuantity() + ", Yêu cầu: " + itemDto.getQuantity());
                 }
 
@@ -132,13 +110,15 @@ public class StockRequestService {
                 movement.setType(StockMovement.MovementType.IN);
                 movement.setQuantity(item.getQuantity());
                 movement.setReason("Yêu cầu #" + request.getId()
-                        + (request.getReason() != null && !request.getReason().trim().isEmpty() ? " - " + request.getReason() : ""));
+                        + (request.getReason() != null && !request.getReason().trim().isEmpty()
+                                ? " - " + request.getReason()
+                                : ""));
                 movement.setReferenceId(request.getId());
                 stockMovementRepository.save(movement);
             } else if (request.getType() == StockRequest.RequestType.EXPORT) {
                 if (product.getQuantity() < item.getQuantity()) {
-                    throw new RuntimeException("Not enough stock for product: " + product.getName() + ". Available: "
-                            + product.getQuantity());
+                    throw new RuntimeException("Không đủ số lượng trong kho: " + product.getName() + ". Số lượng: "
+                            + product.getQuantity() + ", Yêu cầu: " + item.getQuantity());
                 }
                 product.setQuantity(product.getQuantity() - item.getQuantity());
                 productRepository.save(product);
@@ -149,7 +129,9 @@ public class StockRequestService {
                 movement.setType(StockMovement.MovementType.OUT);
                 movement.setQuantity(item.getQuantity());
                 movement.setReason("Yêu cầu #" + request.getId()
-                        + (request.getReason() != null && !request.getReason().trim().isEmpty() ? " - " + request.getReason() : ""));
+                        + (request.getReason() != null && !request.getReason().trim().isEmpty()
+                                ? " - " + request.getReason()
+                                : ""));
                 movement.setReferenceId(request.getId());
                 stockMovementRepository.save(movement);
             }
@@ -160,7 +142,7 @@ public class StockRequestService {
         request.setUpdatedAt(LocalDateTime.now());
         StockRequest approvedRequest = stockRequestRepository.save(request);
 
-        // Generate Invoice
+        // Tự động tạo hóa đơn
         invoiceService.createInvoiceFromRequest(approvedRequest, manager);
 
         return approvedRequest;
